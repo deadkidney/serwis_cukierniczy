@@ -1,31 +1,16 @@
-import { useState, useEffect } from 'react'
+import { Route, Routes } from 'react-router-dom';
+import Header from './components/Header';
+import Home from './routes/Home';
+import Recipe from './routes/Recipe';
 
-function App() {
-  const [message, setMessage] = useState("");
-
-	const fetchAPI = async () => {
-		const response = await fetch("http://localhost:8080/api");
-    const data = await response.json();
-    setMessage(data.message);
-	}
-
-  const fetchUser = async () => {
-		const response = await fetch("http://localhost:8080/userinfo?id=1");
-    const data = await response.json();
-		console.log(data.message);
-	}
-
-	useEffect(() => {
-		fetchAPI();
-	}, []);
-
-  return (
-    <section>
-          <h1>Get started</h1>
-          <p> {message} </p>
-          <button onClick={fetchUser}> user </button>
-    </section>
-  )
+export default function App() {
+	return (
+		<div>
+			<Header/>
+			<Routes>
+				<Route path="/" element={<Home />} />
+				<Route path="recipe/:id" element={<Recipe />} />
+			</Routes>
+		</div>
+	)
 }
-
-export default App;
