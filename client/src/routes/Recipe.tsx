@@ -10,12 +10,12 @@ export default function Recipe() {
 	
 	const getRecipe = async (id : string) => {
 		try {
-			const response = await fetch(`http://localhost:8080/recipeinfo?id=${id}`);
+			const response = await fetch(`http://localhost:8080/api/recipeinfo?id=${id}`);
 			if (!response.ok) {
 				throw new Error(`${response.status}`)
 			}
 			const data = await response.json();
-			setRecipe(data.recipe);
+			setRecipe(data[0]);
 			setLoading(false);
 		} catch (error) {
 			console.error(error);
@@ -28,7 +28,7 @@ export default function Recipe() {
 
 	return (
 		<div>
-			<Link to="/">Back</Link>
+			<Link to="/">Main</Link>
 			{loading ?
 			<p>Loading...</p> :
 			<div key={recipe.id}>

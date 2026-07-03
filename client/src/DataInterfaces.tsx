@@ -8,5 +8,13 @@ interface Ingredient {
 export interface RecipeData {
     id: number;
     title: string;
-    ingredients: Ingredient[]
+    user_id: number;
+    content: string;
+}
+
+export interface UserData {
+    id: number;
+    username: string;
+    passwordHash: string;
+    role: string;
 }

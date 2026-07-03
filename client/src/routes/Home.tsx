@@ -8,12 +8,12 @@ export default function Home() {
 
     const fetchRecipes = async () => {
         try {
-            const response = await fetch("http://localhost:8080/recipes");
+            const response = await fetch("http://localhost:8080/api/recipes");
             if (!response.ok) {
                     throw new Error(`${response.status}`)
             }
             const data = await response.json();
-            setRecipes(data.recipes);
+            setRecipes(data);
             setLoading(false);
         } catch (error) {
 			console.error(error);
