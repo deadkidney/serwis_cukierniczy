@@ -9,10 +9,13 @@ const corsOptions = {
 const app = express();
 const port = 8080;
 app.use(cors(corsOptions));
+app.use(express.json());
 
 app.get("/api/recipes", db.getRecipes);
+app.get("/api/myrecipes", db.getRecipesByAuthor);
 app.get('/api/recipeinfo', db.getRecipeById);
-app.post('api/recipes', db.createRecipe);
+app.post('/api/recipes', db.createRecipe);
+app.put('/api/recipeinfo', db.updateRecipe);
 app.delete('/api/recipeinfo', db.deleteRecipe);
 
 app.get('/api/userinfo', db.getUserById);
