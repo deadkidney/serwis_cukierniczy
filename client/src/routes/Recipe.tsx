@@ -1,39 +1,37 @@
-import { Link, useParams } from "react-router-dom";
-import type { RecipeData } from "../DataInterfaces";
-import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { getRecipeById } from "../utils/recipeQueries";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Recipe() {
 	const {id} = useParams();
-	console.log(id);
-	const [loading, setLoading] = useState(true);
-	const [recipe, setRecipe] = useState<RecipeData | {}>({});
-	
-	const getRecipe = async (id : string) => {
-		try {
-			const response = await fetch(`http://localhost:8080/api/recipeinfo?id=${id}`);
-			if (!response.ok) {
-				throw new Error(`${response.status}`)
-			}
-			const data = await response.json();
-			setRecipe(data[0]);
-			setLoading(false);
-		} catch (error) {
-			console.error(error);
-		}
-	}
-	
-	useEffect(() => {
-		getRecipe(id);
-	}, []);
+	if (!id) throw Error("no recipe id");
+
+	const {data, isLoading, isError} = useQuery({
+		queryKey: ['recipes', {id: id}],
+        queryFn: () => getRecipeById(id),
+		retry: 1
+	})
+
+    if (isLoading)
+        return (<p>Loading...</p>);
+
+    if (isError)
+        return (<p>Couldn't find the recipe</p>);
 
 	return (
 		<div>
-			<Link to="/">Main</Link>
-			{loading ?
-			<p>Loading...</p> :
-			<div key={recipe.id}>
-				<h3>{recipe.title}</h3>
-				<ul>
+			<div key={data[0].id}>
+				<h3>{data[0].title}</h3>
+				<p>Author: {data[0].user_id}</p>
+				<p>{data[0].content}</p>
+				<button>delete</button>
+			</div>
+		</div>
+	);
+};
+
+/*
+<ul>
 					{recipe.ingredients.map((ingredient) => {
 					return(
 						<li key={ingredient.id}>
@@ -42,7 +40,4 @@ export default function Recipe() {
 					);
 				})}
 				</ul>
-			</div>}
-		</div>
-	);
-};
+*/

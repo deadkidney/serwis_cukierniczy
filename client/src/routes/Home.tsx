@@ -1,32 +1,29 @@
-import { useState, useEffect } from 'react'
-import type { RecipeData } from '../DataInterfaces';
+import { useQuery } from '@tanstack/react-query';
+import { getAllRecipes } from '../utils/recipeQueries';
 import RecipeTable from '../components/RecipeTable';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
-    const [loading, setLoading] = useState(true);
-    const [recipes, setRecipes] = useState<RecipeData[]>([]);
+    const {data, isLoading, isFetching, isError} = useQuery({
+        queryKey: ['recipes'],
+        queryFn: getAllRecipes,
+        retry: 1
+    });
 
-    const fetchRecipes = async () => {
-        try {
-            const response = await fetch("http://localhost:8080/api/recipes");
-            if (!response.ok) {
-                    throw new Error(`${response.status}`)
-            }
-            const data = await response.json();
-            setRecipes(data);
-            setLoading(false);
-        } catch (error) {
-			console.error(error);
-		}
-    }
+    if (isLoading) 
+        return (<p> Loading... </p>);
 
-    useEffect(() => {
-        fetchRecipes();
-    }, []);
+    if (isError) 
+        return (<p> Couldn't find the recipes </p>);
+
+    if (data.length == 0)
+        return (<p> No recipes yet </p>)
 
     return (
-        <section>
-            {loading ? <p>Loading...</p> : <RecipeTable recipes={recipes}/>}
-        </section>
+        <div>
+            <Link to='/newrecipe'> Create new recipe </Link>
+            <RecipeTable recipes={data}/>
+            {isFetching && <p>Updating...</p>}
+        </div>
     )
 }

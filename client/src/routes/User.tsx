@@ -1,39 +1,40 @@
 import { Link, useParams } from "react-router-dom";
-import type { UserData } from "../DataInterfaces";
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getUserById } from "../utils/userQueries";
+import { getRecipesByAuthor } from "../utils/recipeQueries";
+import RecipeTable from "../components/RecipeTable";
 
 export default function User() {
 	const {id} = useParams();
-	console.log(id);
-	const [loading, setLoading] = useState(true);
-	const [user, setUser] = useState<UserData | {}>({});
+	if (!id) throw Error("no user id");
+
+	const {data, isLoading, isError} = useQuery({
+		queryKey: ['user', {id: id}],
+        queryFn: () => getUserById(id),
+		retry: 1
+	})
+
+	/*const recipes = useQuery({
+		queryKey: ['recipes', {author: id }],
+		queryFn: () => getRecipesByAuthor(id),
+		retry: 1
+	});*/
 	
-	const getUser = async (id : string) => {
-		try {
-			const response = await fetch(`http://localhost:8080/api/userinfo?id=${id}`);
-			if (!response.ok) {
-				throw new Error(`${response.status}`)
-			}
-			const data = await response.json();
-			setUser(data[0]);
-			setLoading(false);
-		} catch (error) {
-			console.error(error);
-		}
-	}
-	
-	useEffect(() => {
-		getUser(id);
-	}, []);
+
+	if (isLoading) 
+        return (<p>Loading...</p>);
+
+    if (isError) 
+        return (<p>Couldn't find the user</p>);
+
 
 	return (
 		<div>
-			<Link to="/">Main</Link>
-			{loading ?
-			<p>Loading...</p> :
-			<div key={user.id}>
-				<h3>{user.username}</h3>
-			</div>}
+			<div key={data[0].id}>
+				<h3>{data[0].username}</h3>
+			</div>
+			{/*<p>My recipes:</p>
+			<RecipeTable recipes={recipes.data}/>*/}
 		</div>
 	);
 };
