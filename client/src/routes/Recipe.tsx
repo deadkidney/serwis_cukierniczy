@@ -1,9 +1,12 @@
 import { useParams } from "react-router-dom";
-import { getRecipeById } from "../utils/recipeQueries";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { getRecipeById } from "../utils/recipeQueries";
+import EditRecipeForm from "./EditRecipeForm";
 
 export default function Recipe() {
 	const {id} = useParams();
+	const [editMode, setEditMode] = useState(false);
 	if (!id) throw Error("no recipe id");
 
 	const {data, isLoading, isError} = useQuery({
@@ -18,13 +21,16 @@ export default function Recipe() {
     if (isError)
         return (<p>Couldn't find the recipe</p>);
 
+	if (editMode)
+		return (<EditRecipeForm currentRecipe={data[0]} setEditMode={setEditMode}/>)
+
 	return (
 		<div>
 			<div key={data[0].id}>
 				<h3>{data[0].title}</h3>
 				<p>Author: {data[0].user_id}</p>
 				<p>{data[0].content}</p>
-				<button>delete</button>
+				<button onClick={() => setEditMode(true)}>edit</button>
 			</div>
 		</div>
 	);

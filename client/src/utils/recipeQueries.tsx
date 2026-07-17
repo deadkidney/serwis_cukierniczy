@@ -24,11 +24,24 @@ export const getRecipeById = async (id : string) => {
     return response.json();
 }
 
-export const addRecipe = async (newRecipe: RecipeData) => {
+export const addRecipe = async (recipe: RecipeData) => {
     const response = await fetch("http://localhost:8080/api/recipes",
         {   method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(newRecipe),
+            body: JSON.stringify(recipe),
+        }
+    );
+    if (!response.ok) {
+        throw new Error('failed to add recipe');
+    }
+    return true;
+}
+
+export const updateRecipe = async (recipe: RecipeData) => {
+    const response = await fetch(`http://localhost:8080/api/recipeinfo?id=${recipe.id}`,
+        {   method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(recipe),
         }
     );
     if (!response.ok) {

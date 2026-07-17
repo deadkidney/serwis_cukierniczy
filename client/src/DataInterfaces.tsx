@@ -6,7 +6,7 @@ interface Ingredient {
 }
 
 export interface RecipeData {
-    id: number;
+    id: string;
     title: string;
     user_id: number;
     content: string;

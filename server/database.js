@@ -54,11 +54,11 @@ const createRecipe = async (req, res) => {
 
 const updateRecipe = async (req, res) => {
     const id = parseInt(req.query.id);
-    const { title, author } = req.body;
+    const { title, content } = req.body;
     try {
         await pool.query(
-        'UPDATE recipes SET title = $1, user_id = $2 WHERE id = $3',
-        [title, author, id]
+        'UPDATE recipes SET title = $1, content = $2 WHERE id = $3',
+        [title, content, id]
         );
         res.status(200).send('recipe updated')
     } catch (error) {
