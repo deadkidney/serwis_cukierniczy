@@ -2,6 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { getRecipeById, deleteRecipe } from "../utils/recipeQueries";
+import { getLikesAmount } from "../utils/otherQueries";
 import EditRecipeForm from "./EditRecipeForm";
 
 export default function Recipe() {
@@ -14,6 +15,12 @@ export default function Recipe() {
 	const {data, isLoading, isError} = useQuery({
 		queryKey: ['recipes', {id: id}],
         queryFn: () => getRecipeById(id),
+		retry: 1
+	})
+	
+	const likes = useQuery({
+		queryKey: ['likes', {recipe: id}],
+		queryFn: () => getLikesAmount(id),
 		retry: 1
 	})
 
@@ -30,7 +37,7 @@ export default function Recipe() {
 		deleteRecipeMutation.mutate(id);
 	};
 
-    if (isLoading)
+    if (isLoading || likes.isLoading)
         return (<p>Loading...</p>);
 
     if (isError)
@@ -42,6 +49,7 @@ export default function Recipe() {
 	return (
 		<div key={data[0].id}>
 			<h3>{data[0].title}</h3>
+			<p>Likes: {likes.data[0].count}</p>
 			<p>Author:</p>
 			<Link to={`/user/${data[0].user_id}`}>{data[0].username}</Link>
 			<p>{data[0].content}</p>

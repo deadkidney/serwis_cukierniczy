@@ -19,8 +19,10 @@ app.post('/api/recipes', db.createRecipe);
 app.put('/api/recipeinfo', db.updateRecipe);
 app.delete('/api/recipeinfo', db.deleteRecipe);
 
+app.get('/api/users', db.getUsers);
 app.get('/api/userinfo', db.getUserById);
 
+app.get('/api/likes', db.getLikesAmount);
 
 app.listen(port, () => {
 	console.log ("idk")

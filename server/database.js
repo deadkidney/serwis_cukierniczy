@@ -91,8 +91,19 @@ const updateRecipe = async (req, res) => {
 const deleteRecipe = async (req, res) => {
     const id = parseInt(req.query.id);
     try {
-        await pool.query('DELETE FROM recipes WHERE id = $1', [id]);
-        res.status(200).send(`deleted user ${id}`);
+        await pool.query(
+            'DELETE FROM likes WHERE recipe_id = $1',
+            [id]
+        );
+        await pool.query(
+            'DELETE FROM comments WHERE recipe_id = $1',
+            [id]
+        );
+        await pool.query(
+            'DELETE FROM recipes WHERE id = $1',
+            [id]
+        );
+        res.status(200).send(`deleted user ${id} and corresponding likes and comments`);
     } catch (error) {
         throw new Error("can't delete recipe");
     }
@@ -123,6 +134,20 @@ const getUserById = async (req, res) => {
     }
 }
 
+//LIKE QUERIES
+const getLikesAmount = async (req, res) => {
+    const recipe = parseInt(req.query.recipe);
+    try {
+        const result = await pool.query(
+            'SELECT COUNT(*) FROM likes WHERE likes.recipe_id = $1',
+            [recipe]
+        );
+        res.status(200).json(result.rows);
+    } catch (error) {
+        throw new Error("can't get amount of likes by recipe");
+    }
+}
+
 
 export {
     getRecipes,
@@ -133,5 +158,6 @@ export {
     updateRecipe,
     deleteRecipe,
     getUsers,
-    getUserById
+    getUserById,
+    getLikesAmount
 }
