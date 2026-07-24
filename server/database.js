@@ -8,9 +8,12 @@ const pool = new Pool({
     port: 5432,
 })
 
+//RECIPE QUERIES
 const getRecipes = async (req, res) => {
     try {
-        const result = await pool.query('SELECT id, title FROM recipes');
+        const result = await pool.query(
+            'SELECT id, title FROM recipes'
+        );
         res.status(200).json(result.rows);
     } catch (error) {
         throw new Error("can't get recipes");
@@ -20,17 +23,36 @@ const getRecipes = async (req, res) => {
 const getRecipesByAuthor = async (req, res) => {
     const author = parseInt(req.query.author);
     try {
-        const result = await pool.query('SELECT id, title FROM recipes WHERE user_id = $1', [author]);
+        const result = await pool.query(
+            'SELECT id, title FROM recipes WHERE user_id = $1',
+            [author]
+        );
         res.status(200).json(result.rows);
     } catch (error) {
-        throw new Error("can't get recipes");
+        throw new Error("can't get authored recipes");
+    }
+}
+
+const getLikedRecipes = async (req, res) => {
+    const user = parseInt(req.query.user);
+    try {
+        const result = await pool.query(
+            'SELECT recipes.id, recipes.title FROM recipes JOIN likes ON recipes.id = likes.recipe_id WHERE likes.user_id = $1',
+            [user]
+        );
+        res.status(200).json(result.rows);
+    } catch (error) {
+        throw new Error("can't get liked recipes");
     }
 }
 
 const getRecipeById = async (req, res) => {
     const id = parseInt(req.query.id);
     try {
-        const result = await pool.query('SELECT * FROM recipes WHERE id = $1', [id]);
+        const result = await pool.query(
+            'SELECT recipes.id, recipes.title, recipes.content, recipes.user_id, users.username FROM recipes JOIN users ON recipes.user_id = users.id WHERE recipes.id = $1', 
+            [id]
+        );
         if(result.rowCount == 0)
             throw new Error("can't find recipe by id");
         res.status(200).json(result.rows);
@@ -76,6 +98,7 @@ const deleteRecipe = async (req, res) => {
     }
 }
 
+// USER QUERIES
 const getUsers = async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM users');
@@ -88,7 +111,10 @@ const getUsers = async (req, res) => {
 const getUserById = async (req, res) => {
     const id = parseInt(req.query.id);
     try {
-        const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+        const result = await pool.query(
+            'SELECT * FROM users WHERE id = $1',
+            [id]
+        );
         if(result.rowCount == 0)
             throw new Error("can't find user by id");
         res.status(200).json(result.rows);
@@ -101,6 +127,7 @@ const getUserById = async (req, res) => {
 export {
     getRecipes,
     getRecipesByAuthor,
+    getLikedRecipes,
     getRecipeById,
     createRecipe,
     updateRecipe,

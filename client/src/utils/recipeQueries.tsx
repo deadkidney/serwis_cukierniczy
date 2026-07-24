@@ -8,18 +8,26 @@ export const getAllRecipes = async () => {
     return response.json();
 }
 
+export const getRecipeById = async (id : string) => {
+    const response = await fetch(`http://localhost:8080/api/recipeinfo?id=${id}`);
+    if (!response.ok) {
+        throw new Error('no recipe');
+    }
+    return response.json();
+}
+
 export const getRecipesByAuthor = async (author_id: string) => {
-    const response = await fetch(`http://localhost:8080/api/myrecipes?author=${author_id}`);
+    const response = await fetch(`http://localhost:8080/api/recipes/authored?author=${author_id}`);
     if (!response.ok) {
             throw new Error('failed to find recipes');
     }
     return response.json();
 }
 
-export const getRecipeById = async (id : string) => {
-    const response = await fetch(`http://localhost:8080/api/recipeinfo?id=${id}`);
+export const getLikedRecipes = async (user_id: string) => {
+    const response = await fetch(`http://localhost:8080/api/recipes/liked?user=${user_id}`);
     if (!response.ok) {
-        throw new Error('no recipe');
+            throw new Error('failed to find recipes');
     }
     return response.json();
 }

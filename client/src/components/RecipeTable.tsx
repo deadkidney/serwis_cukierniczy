@@ -7,6 +7,9 @@ export default function RecipeTable({
     recipes: RecipeData[]
 }) {
 
+    if (recipes.length == 0)
+        return (<p>Nothing here...</p>);
+
     return (
         <div>
             {recipes.map((recipe) => {

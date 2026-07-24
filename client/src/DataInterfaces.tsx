@@ -8,8 +8,9 @@ interface Ingredient {
 export interface RecipeData {
     id: string;
     title: string;
-    user_id: number;
     content: string;
+    user_id: number;
+    username: string;
 }
 
 export interface UserData {

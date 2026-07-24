@@ -12,8 +12,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/api/recipes", db.getRecipes);
-app.get("/api/myrecipes", db.getRecipesByAuthor);
 app.get('/api/recipeinfo', db.getRecipeById);
+app.get("/api/recipes/authored", db.getRecipesByAuthor);
+app.get("/api/recipes/liked", db.getLikedRecipes);
 app.post('/api/recipes', db.createRecipe);
 app.put('/api/recipeinfo', db.updateRecipe);
 app.delete('/api/recipeinfo', db.deleteRecipe);
