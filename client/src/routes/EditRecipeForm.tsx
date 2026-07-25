@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { updateRecipe } from "../utils/recipeQueries";
 import type { RecipeData } from "../DataInterfaces";
@@ -10,19 +11,21 @@ export default function EditRecipeForm ({
     currentRecipe: RecipeData,
 	setEditMode : React.Dispatch<React.SetStateAction<boolean>>
 }) {
+	let navigate = useNavigate();
+
 	const [recipe, setRecipe] = useState({
-		id: currentRecipe.id,
-		title: currentRecipe.title,
-		user_id: currentRecipe.user_id,
-		content: currentRecipe.content
+		id: currentRecipe.id || "",
+		title: currentRecipe.title || "",
+		user_id: currentRecipe.user_id || "",
+		content: currentRecipe.content || ""
 	});
-	console.log(currentRecipe);
 
 	const updateRecipeMutation = useMutation({
 		mutationFn: updateRecipe,
 		onSuccess: () => {
-			alert('recipe updated successfully');
 			setEditMode(false);
+			navigate(`/recipe/${currentRecipe.id}`);
+			alert('recipe updated successfully');
 		},
 		onError: () => alert('failed to update recipe :c ')
 	});

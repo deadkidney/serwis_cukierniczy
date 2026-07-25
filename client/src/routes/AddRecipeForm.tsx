@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { addRecipe } from "../utils/recipeQueries";
 
 export default function AddRecipeForm() {
+	let navigate = useNavigate();
+	
 	const [recipe, setRecipe] = useState({
 		id: "",
 		title: "",
@@ -12,7 +15,10 @@ export default function AddRecipeForm() {
 
 	const addRecipeMutation = useMutation({
 		mutationFn: addRecipe,
-		onSuccess: () => alert('recipe added successfully'),
+		onSuccess: ({id}) => {
+			navigate(`/recipe/${id}`);
+			alert('recipe added successfully');
+		},
 		onError: () => alert('failed to add recipe :c ')
 	});
 
@@ -34,6 +40,8 @@ export default function AddRecipeForm() {
 				<input type="text" value={recipe.title} name="title" onChange={onChangeHandler} />
 				<p>author:</p>
 				<input type="number" value={recipe.user_id} name="user_id" onChange={onChangeHandler} />
+				<p>content:</p>
+				<input type="text" value={recipe.content} name="content" onChange={onChangeHandler} />
 			</form>
 			<button onClick={handleSubmit} disabled={addRecipeMutation.isPending}>
 				{addRecipeMutation.isPending ? "Adding Recipe..." : "Add Recipe"}
