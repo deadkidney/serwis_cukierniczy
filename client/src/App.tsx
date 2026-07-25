@@ -4,6 +4,7 @@ import Home from './routes/Home';
 import Recipe from './routes/Recipe';
 import AddRecipeForm from './routes/AddRecipeForm';
 import User from './routes/User';
+import CommentList from './routes/CommentList';
 
 export default function App() {
 	return (
@@ -11,9 +12,10 @@ export default function App() {
 			<Header/>
 			<Routes>
 				<Route path="/" element={<Home />} />
-				<Route path="recipe/:id" element={<Recipe />} />
-				<Route path="newrecipe" element={<AddRecipeForm />} />
-				<Route path="user/:id" element={<User />} />
+				<Route path="/recipe/:id" element={<Recipe />} />
+				<Route path="/comments/recipe/:id" element={<CommentList />} />
+				<Route path="/newrecipe" element={<AddRecipeForm />} />
+				<Route path="/user/:id" element={<User />} />
 				<Route path="*" element={<Navigate to="/" />}/>
 			</Routes>
 		</div>

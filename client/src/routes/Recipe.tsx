@@ -27,7 +27,7 @@ export default function Recipe() {
 	const deleteRecipeMutation = useMutation({
 		mutationFn: deleteRecipe,
 		onSuccess: () => {
-			navigate('/');
+			navigate(-1);
 			alert('deleted successfully');
 		},
 		onError: () => alert('failed to delete')
@@ -55,6 +55,7 @@ export default function Recipe() {
 			<p>{data[0].content}</p>
 			<button onClick={() => setEditMode(true)}>edit</button>
 			<button onClick={handleDelete}>delete</button>
+			<Link to={`/comments/recipe/${data[0].id}`}>Comments</Link>
 		</div>
 	);
 };

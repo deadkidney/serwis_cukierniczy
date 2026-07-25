@@ -46,6 +46,19 @@ const getLikedRecipes = async (req, res) => {
     }
 }
 
+const getFilteredRecipes = async (req, res) => {
+    const search = '%'+req.query.search+'%';
+    try {
+        const result = await pool.query(
+            'SELECT id, title FROM recipes WHERE title LIKE $1',
+            [search]
+        );
+        res.status(200).json(result.rows);
+    } catch (error) {
+        throw new Error("can't get filtered recipes");
+    }
+}
+
 const getRecipeById = async (req, res) => {
     const id = parseInt(req.query.id);
     try {
@@ -68,7 +81,7 @@ const createRecipe = async (req, res) => {
         'INSERT INTO recipes (title, user_id) VALUES ($1, $2) RETURNING *',
         [title, user_id]
         );
-        res.status(201).send(`recipe added with ID: ${results.rows[0].id}`)
+        res.status(201).json({id: results.rows[0].id});
     } catch (error) {
         throw new Error("can't create recipe");
   }
@@ -148,16 +161,31 @@ const getLikesAmount = async (req, res) => {
     }
 }
 
+//COMMENT QUERIES
+const getCommentsByRecipe = async (req, res) => {
+    const recipe = parseInt(req.query.recipe);
+    try {
+        const result = await pool.query(
+            'SELECT comments.id, comments.content, comments.user_id, users.username FROM comments JOIN users ON comments.user_id = users.id WHERE comments.recipe_id = $1',
+            [recipe]
+        );
+        res.status(200).json(result.rows);
+    } catch (error) {
+        throw new Error("can't get comments by recipe");
+    }
+}
 
 export {
     getRecipes,
     getRecipesByAuthor,
     getLikedRecipes,
+    getFilteredRecipes,
     getRecipeById,
     createRecipe,
     updateRecipe,
     deleteRecipe,
     getUsers,
     getUserById,
-    getLikesAmount
+    getLikesAmount,
+    getCommentsByRecipe
 }

@@ -8,6 +8,20 @@ export const getAllRecipes = async () => {
     return response.json();
 }
 
+export const getFilteredRecipes = async (search: string) => {
+    const response = await fetch(`http://localhost:8080/api/recipes/filtered?search=${search}`);
+    if (!response.ok) {
+            throw new Error('failed to find recipes');
+    }
+    return response.json();
+}
+
+export const getRecipes = (search: string) => {
+    if(!search)
+        return getAllRecipes();
+    return getFilteredRecipes(search);
+}
+
 export const getRecipeById = async (id : string) => {
     const response = await fetch(`http://localhost:8080/api/recipeinfo?id=${id}`);
     if (!response.ok) {
@@ -42,7 +56,7 @@ export const addRecipe = async (recipe: RecipeData) => {
     if (!response.ok) {
         throw new Error('failed to add recipe');
     }
-    return true;
+    return response.json();
 }
 
 export const updateRecipe = async (recipe: RecipeData) => {

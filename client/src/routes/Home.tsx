@@ -1,29 +1,25 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAllRecipes } from '../utils/recipeQueries';
+import { getRecipes } from '../utils/recipeQueries';
+import { useState } from 'react';
 import RecipeTable from '../components/RecipeTable';
-import { Link } from 'react-router-dom';
 
 export default function Home() {
-    const {data, isLoading, isFetching, isError} = useQuery({
+	const [searchVal, setSearchVal] = useState('');
+    
+	const {data, isLoading, isError, isSuccess, refetch} = useQuery({
         queryKey: ['recipes'],
-        queryFn: getAllRecipes,
+        queryFn: () => getRecipes(searchVal),
         retry: 1
     });
 
-    if (isLoading) 
-        return (<p> Loading... </p>);
-
-    if (isError) 
-        return (<p> Couldn't find the recipes </p>);
-
-    if (data.length == 0)
-        return (<p> No recipes yet </p>)
-
-    return (
-        <div>
-            <Link to='/newrecipe'> Create new recipe </Link>
-            <RecipeTable recipes={data}/>
-            {isFetching && <p>Updating...</p>}
+	return (
+       	<div>
+           	<input type="text" value={searchVal} name="search" onChange={(e) => setSearchVal( e.target.value)} />
+			<button onClick={() => refetch()}>search</button>
+			{isLoading && <p> Loading... </p>}
+			{isError && <p> Couldn't find the recipes </p>}
+			{isSuccess && <RecipeTable recipes={data}/>}
         </div>
     )
+
 }
