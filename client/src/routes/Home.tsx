@@ -14,7 +14,8 @@ export default function Home() {
 
 	return (
        	<div>
-           	<input type="text" value={searchVal} name="search" onChange={(e) => setSearchVal( e.target.value)} />
+			<button onClick={() => {setSearchVal(''); refetch()}}>see all</button>
+           	<input type="text" value={searchVal} name="search" onChange={(e) => setSearchVal(e.target.value)} />
 			<button onClick={() => refetch()}>search</button>
 			{isLoading && <p> Loading... </p>}
 			{isError && <p> Couldn't find the recipes </p>}

@@ -161,6 +161,19 @@ const getLikesAmount = async (req, res) => {
     }
 }
 
+const addLike = async (req, res) => {
+    const { user_id, recipe_id } = req.body;
+    try {
+        await pool.query(
+        'INSERT INTO likes (user_id, recipe_id) VALUES ($1, $2)',
+        [user_id, recipe_id]
+        );
+        res.status(201).send('like added');
+    } catch (error) {
+        throw new Error("can't add like");
+  }
+}
+
 //COMMENT QUERIES
 const getCommentsByRecipe = async (req, res) => {
     const recipe = parseInt(req.query.recipe);
@@ -175,6 +188,20 @@ const getCommentsByRecipe = async (req, res) => {
     }
 }
 
+const addComment = async (req, res) => {
+    const { recipe_id, user_id, content } = req.body;
+    try {
+        await pool.query(
+        'INSERT INTO comments (recipe_id, user_id, content) VALUES ($1, $2, $3)',
+        [recipe_id, user_id, content]
+        );
+        res.status(201).send('comment added');
+    } catch (error) {
+        throw new Error("can't add comment");
+  }
+}
+
+
 export {
     getRecipes,
     getRecipesByAuthor,
@@ -187,5 +214,7 @@ export {
     getUsers,
     getUserById,
     getLikesAmount,
-    getCommentsByRecipe
+    addLike,
+    getCommentsByRecipe,
+    addComment
 }

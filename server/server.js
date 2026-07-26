@@ -24,7 +24,10 @@ app.get('/api/users', db.getUsers);
 app.get('/api/userinfo', db.getUserById);
 
 app.get('/api/likes', db.getLikesAmount);
+app.post('/api/likes', db.addLike);
+
 app.get('/api/comments', db.getCommentsByRecipe);
+app.post('/api/comments', db.addComment);
 
 app.listen(port, () => {
 	console.log ("idk")

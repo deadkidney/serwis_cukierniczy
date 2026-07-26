@@ -9,7 +9,7 @@ export default function AddRecipeForm() {
 	const [recipe, setRecipe] = useState({
 		id: "",
 		title: "",
-		user_id: 0,
+		user_id: "",
 		content: ""
 	});
 

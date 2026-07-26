@@ -1,10 +1,10 @@
-import type { RecipeData } from '../DataInterfaces';
-import RecipePreviev from './RecipePreviev';
+import { Link } from "react-router-dom";
+import type { RecipeShort } from '../DataInterfaces';
 
 export default function RecipeTable({
     recipes
 } : {
-    recipes: RecipeData[]
+    recipes: RecipeShort[]
 }) {
 
     if (recipes.length == 0)
@@ -14,7 +14,11 @@ export default function RecipeTable({
         <div>
             {recipes.map((recipe) => {
                 return(
-                    <RecipePreviev key={recipe.id} data={recipe}/>
+                    <div key={recipe.id}>
+                        <Link to={`/recipe/${recipe.id}`}>
+                            <h3>{recipe.title}</h3>
+                        </Link>
+                    </div> 
                 );
             })}
         </div>

@@ -2,7 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { getRecipeById, deleteRecipe } from "../utils/recipeQueries";
-import { getLikesAmount } from "../utils/otherQueries";
+import { addLike, getLikesAmount } from "../utils/otherQueries";
 import EditRecipeForm from "./EditRecipeForm";
 
 export default function Recipe() {
@@ -12,7 +12,7 @@ export default function Recipe() {
 	let navigate = useNavigate();
 	const [editMode, setEditMode] = useState(false);
 
-	const {data, isLoading, isError} = useQuery({
+	const {data, isLoading, isError, refetch} = useQuery({
 		queryKey: ['recipes', {id: id}],
         queryFn: () => getRecipeById(id),
 		retry: 1
@@ -37,6 +37,19 @@ export default function Recipe() {
 		deleteRecipeMutation.mutate(id);
 	};
 
+	const addLikeMutation = useMutation({
+		mutationFn: addLike,
+		onSuccess: () => {
+			likes.refetch();
+			alert('recipe liked successfully');
+		},
+		onError: () => alert('failed to add recipe :c ')
+	});
+
+	const handleLike = () => {
+		addLikeMutation.mutate({recipe_id: id, user_id: '3'}); //placeholder user id
+	};
+
     if (isLoading || likes.isLoading)
         return (<p>Loading...</p>);
 
@@ -48,6 +61,7 @@ export default function Recipe() {
 
 	return (
 		<div key={data[0].id}>
+			<button onClick={handleLike}>like</button>
 			<h3>{data[0].title}</h3>
 			<p>Likes: {likes.data[0].count}</p>
 			<p>Author:</p>
