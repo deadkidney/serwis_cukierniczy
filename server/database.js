@@ -75,11 +75,11 @@ const getRecipeById = async (req, res) => {
 }
 
 const createRecipe = async (req, res) => {
-    const { title, user_id } = req.body;
+    const { title, user_id, content } = req.body;
     try {
         const results = await pool.query(
-        'INSERT INTO recipes (title, user_id) VALUES ($1, $2) RETURNING *',
-        [title, user_id]
+        'INSERT INTO recipes (title, user_id, content) VALUES ($1, $2, $3) RETURNING *',
+        [title, user_id, content]
         );
         res.status(201).json({id: results.rows[0].id});
     } catch (error) {

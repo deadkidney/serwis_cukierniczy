@@ -37,21 +37,22 @@ export default function EditRecipeForm ({
 		}))
 	}
 
-	const handleSubmit = () => {
+	const handleSubmit = (e) => {
+		e.preventDefault();
 		updateRecipeMutation.mutate(recipe);
 	};
 
 	return (
 		<div>
-			<form>
+			<form onSubmit={handleSubmit}>
 				<p>title:</p>
 				<input type="text" value={recipe.title} name="title" onChange={onChangeHandler} />
 				<p>content:</p>
 				<input type="text" value={recipe.content} name="content" onChange={onChangeHandler} />
-			</form>
-			<button onClick={handleSubmit} disabled={updateRecipeMutation.isPending}>
+			<button type="submit" disabled={updateRecipeMutation.isPending}>
 				{updateRecipeMutation.isPending ? "Updating Recipe..." : "Update Recipe"}
 			</button>
+			</form>
 		</div>
 	);
 };
