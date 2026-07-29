@@ -1,15 +1,21 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../authContext";
 import { useMutation } from "@tanstack/react-query";
 import { addRecipe } from "../utils/recipeQueries";
 
 export default function AddRecipeForm() {
 	let navigate = useNavigate();
+	const {user} = useAuth();
+
+	if (!user)
+		return <Link to='/login'>Log in to add recipe</Link>
+
 	
 	const [recipe, setRecipe] = useState({
 		id: "",
 		title: "",
-		user_id: "",
+		user_id: user.id,
 		content: ""
 	});
 
@@ -39,8 +45,6 @@ export default function AddRecipeForm() {
 			<form onSubmit={handleSubmit}>
 				<p>title:</p>
 				<input type="text" value={recipe.title} name="title" onChange={onChangeHandler} required/>
-				<p>author:</p>
-				<input type="number" value={recipe.user_id} name="user_id" onChange={onChangeHandler} required/>
 				<p>content:</p>
 				<input type="text" value={recipe.content} name="content" onChange={onChangeHandler} required/>
 			<button type="submit" disabled={addRecipeMutation.isPending}>

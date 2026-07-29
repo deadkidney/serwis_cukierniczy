@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { useAuth } from "../authContext";
 import { addComment } from "../utils/otherQueries";
 
 export default function NewComment({
@@ -9,7 +11,11 @@ export default function NewComment({
     recipe_id : string,
     refetch: any
 }) {
-	
+	const {user} = useAuth();
+
+	if (!user)
+		return <Link to='/login'>Log in to comment</Link>
+
 	const [content, setContent] = useState("");
 
 	const addCommentMutation = useMutation({
@@ -23,7 +29,7 @@ export default function NewComment({
 	});
 
 	const handleSubmit = () => {
-		addCommentMutation.mutate({content: content, user_id: '4', recipe_id: recipe_id});
+		addCommentMutation.mutate({content: content, user_id: user.id, recipe_id: recipe_id});
 	};
 
 	return (

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors'
 import * as db from './database.js';
+import * as auth from './authentication.js'
 
 const corsOptions = {
 	origin: ["http://localhost:5173"]
@@ -10,6 +11,8 @@ const app = express();
 const port = 8080;
 app.use(cors(corsOptions));
 app.use(express.json());
+
+app.post('/api/login', auth.login)
 
 app.get("/api/recipes", db.getRecipes);
 app.get('/api/recipeinfo', db.getRecipeById);
@@ -30,5 +33,5 @@ app.get('/api/comments', db.getCommentsByRecipe);
 app.post('/api/comments', db.addComment);
 
 app.listen(port, () => {
-	console.log ("idk")
+	console.log ("funguje")
 });

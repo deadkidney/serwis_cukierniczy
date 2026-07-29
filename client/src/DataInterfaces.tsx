@@ -17,11 +17,17 @@ export interface RecipeData {
     user_id: string;
 }
 
-export interface UserData {
-    id: number;
+export interface UserShort {
     username: string;
-    passwordHash: string;
+    password: string;
+}
+
+export interface UserData {
+    id: string;
+    username: string;
+    passwordhash: string;
     role: string;
+    token: string;
 }
 
 export interface CommentData {

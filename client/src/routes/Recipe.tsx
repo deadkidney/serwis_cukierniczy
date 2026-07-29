@@ -3,11 +3,14 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { getRecipeById, deleteRecipe } from "../utils/recipeQueries";
 import { addLike, getLikesAmount } from "../utils/otherQueries";
+import { useAuth } from "../authContext";
 import EditRecipeForm from "./EditRecipeForm";
 
 export default function Recipe() {
 	const {id} = useParams();
 	if (!id) throw Error("no recipe id");
+
+	const {user} = useAuth();
 	
 	let navigate = useNavigate();
 	const [editMode, setEditMode] = useState(false);
@@ -33,10 +36,6 @@ export default function Recipe() {
 		onError: () => alert('failed to delete')
 	});
 
-	const handleDelete = () => {
-		deleteRecipeMutation.mutate(id);
-	};
-
 	const addLikeMutation = useMutation({
 		mutationFn: addLike,
 		onSuccess: () => {
@@ -45,10 +44,6 @@ export default function Recipe() {
 		},
 		onError: () => alert('failed to add recipe :c ')
 	});
-
-	const handleLike = () => {
-		addLikeMutation.mutate({recipe_id: id, user_id: '3'}); //placeholder user id
-	};
 
     if (isLoading || likes.isLoading)
         return (<p>Loading...</p>);
@@ -61,14 +56,16 @@ export default function Recipe() {
 
 	return (
 		<div key={data[0].id}>
-			<button onClick={handleLike}>like</button>
+			{user && user.id != data[0].user_id && <button onClick={() => addLikeMutation.mutate({recipe_id: id, user_id: user.id})}>like</button>}
 			<h3>{data[0].title}</h3>
 			<p>Likes: {likes.data[0].count}</p>
 			<p>Author:</p>
 			<Link to={`/user/${data[0].user_id}`}>{data[0].username}</Link>
 			<p>{data[0].content}</p>
-			<button onClick={() => setEditMode(true)}>edit</button>
-			<button onClick={handleDelete}>delete</button>
+			{ user && user.id == data[0].user_id &&
+				<button onClick={() => setEditMode(true)}>edit</button>}
+			{ user && user.id == data[0].user_id &&
+				<button onClick={() => deleteRecipeMutation.mutate(id)}>delete</button>}
 			<Link to={`/comments/recipe/${data[0].id}`}>Comments</Link>
 		</div>
 	);
