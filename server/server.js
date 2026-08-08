@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors'
-import * as db from './database.js';
+import * as db from './repository.js';
 import * as auth from './authentication.js'
 
 const corsOptions = {
@@ -14,23 +14,80 @@ app.use(express.json());
 
 app.post('/api/login', auth.login)
 
-app.get("/api/recipes", db.getRecipes);
-app.get('/api/recipeinfo', db.getRecipeById);
-app.get("/api/recipes/authored", db.getRecipesByAuthor);
-app.get("/api/recipes/liked", db.getLikedRecipes);
-app.get("/api/recipes/filtered", db.getFilteredRecipes);
-app.post('/api/recipes', db.createRecipe);
-app.put('/api/recipeinfo', db.updateRecipe);
-app.delete('/api/recipeinfo', db.deleteRecipe);
 
-app.get('/api/users', db.getUsers);
-app.get('/api/userinfo', db.getUserById);
+app.get("/api/recipes", async (req, res) => {
+	const rows = await db.getRecipes();
+	res.status(200).json(rows);
+});
+app.get("/api/recipes/authored", async (req, res) => {
+	const author = parseInt(req.query.author);
+	const rows = await db.getRecipesByAuthor(author);
+	res.status(200).json(rows);
+});
+app.get("/api/recipes/liked", async (req, res) => {
+	const user = parseInt(req.query.user);
+	const rows = await db.getLikedRecipes(user);
+	res.status(200).json(rows);
+});
+app.get("/api/recipes/filtered", async (req, res) => {
+	const search = '%'+req.query.search+'%';
+	const rows = await db.getFilteredRecipes(search);
+	res.status(200).json(rows);
+});
+app.get('/api/recipeinfo', async (req, res) => {
+	const id = parseInt(req.query.id);
+	const rows = await db.getRecipeById(id);
+	res.status(200).json(rows);
+});
+app.post('/api/recipes', async (req, res) => {
+	const { title, user_id, content } = req.body;
+	const rows = await db.createRecipe(title, user_id, content);
+	res.status(201).json({id: rows[0].id});
+});
+app.put('/api/recipeinfo', async (req, res) => {
+	const id = parseInt(req.query.id);
+	const { title, content } = req.body;
+	await db.updateRecipe(id, title, content);
+	res.status(200).send(`updated recipe ${id}`);
+});
+app.delete('/api/recipeinfo', async (req, res) => {
+	const id = parseInt(req.query.id);
+	await db.deleteRecipe(id);
+	res.status(200).send(`deleted recipe ${id} and corresponding likes and comments`);
+});
 
-app.get('/api/likes', db.getLikesAmount);
-app.post('/api/likes', db.addLike);
 
-app.get('/api/comments', db.getCommentsByRecipe);
-app.post('/api/comments', db.addComment);
+app.get('/api/users', async (req, res) => {
+	const rows = await db.getUsers();
+	res.status(200).json(rows);
+});
+app.get('/api/userinfo', async (req, res) => {
+	const id = parseInt(req.query.id);
+	const rows = await db.getUserById(id);
+	res.status(200).json(rows);
+});
+
+app.get('/api/likes', async (req, res) => {
+	const recipe = parseInt(req.query.recipe);
+	const rows = await db.getLikesAmount(recipe);
+	res.status(200).json(rows);
+});
+app.post('/api/likes', async (req, res) => {
+	const { user_id, recipe_id } = req.body;
+	await db.addLike(user_id, recipe_id);
+	res.status(201).send('like added');
+});
+
+app.get('/api/comments', async (req, res) => {
+	const recipe = parseInt(req.query.recipe);
+	const rows = await db.getCommentsByRecipe(recipe);
+	res.status(200).json(rows);
+});
+app.post('/api/comments', async (req, res) => {
+	const { recipe_id, user_id, content } = req.body;
+	await db.addComment(recipe_id, user_id, content);
+	res.status(201).send('comment added');
+});
 
 app.listen(port, () => {
 	console.log ("funguje")
