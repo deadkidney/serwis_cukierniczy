@@ -141,15 +141,15 @@ const getUserById = async (id) => {
 }
 
 //LIKE QUERIES
-const getLikesAmount = async (recipe) => {
+const getLikesByRecipe = async (recipe) => {
     try {
         const result = await pool.query(
-            'SELECT COUNT(*) FROM likes WHERE likes.recipe_id = $1',
+            'SELECT user_id FROM likes WHERE recipe_id = $1',
             [recipe]
         );
         return result.rows;
     } catch (error) {
-        throw new Error("can't get amount of likes by recipe");
+        throw new Error("can't get likes by recipe");
     }
 }
 
@@ -163,6 +163,18 @@ const addLike = async (user_id, recipe_id) => {
     } catch (error) {
         throw new Error("can't add like");
   }
+}
+
+const deleteLike = async (user_id, recipe_id) => {
+    try {
+        await pool.query(
+            'DELETE FROM likes WHERE user_id = $1 AND recipe_id = $2',
+            [user_id, recipe_id]
+        );
+        return true;
+    } catch (error) {
+        throw new Error("can't delete like");
+    }
 }
 
 //COMMENT QUERIES
@@ -190,6 +202,17 @@ const addComment = async (recipe_id, user_id, content) => {
   }
 }
 
+const deleteComment = async (id) => {
+    try {
+        await pool.query(
+            'DELETE FROM comments WHERE id = $1',
+            [id]
+        );
+        return true;
+    } catch (error) {
+        throw new Error("can't delete comment");
+    }
+}
 
 export {
     getRecipes,
@@ -202,8 +225,10 @@ export {
     deleteRecipe,
     getUsers,
     getUserById,
-    getLikesAmount,
+    getLikesByRecipe,
     addLike,
+    deleteLike,
     getCommentsByRecipe,
-    addComment
+    addComment,
+    deleteComment
 }

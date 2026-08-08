@@ -18,7 +18,7 @@ export default function Header() {
             <Link to='/'>main </Link>
             <Link to='/newrecipe'> Create new recipe </Link>
             {user? <button onClick={logout}>Log out</button> : <Link to='/login'>Log in</Link>}
-            {user && <p>{user.username}</p>}
+            {user && <Link to={`/user/${user.id}`}>{user.username}</Link>}
         </section>
         
     );

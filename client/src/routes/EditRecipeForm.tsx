@@ -1,30 +1,44 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import { updateRecipe } from "../utils/recipeQueries";
-import type { RecipeData } from "../DataInterfaces";
+import { useParams,useNavigate } from "react-router-dom";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getRecipeById, updateRecipe } from "../utils/recipeQueries";
+import { useAuth } from "../authContext";
 
-export default function EditRecipeForm ({
-    currentRecipe,
-	setEditMode
-} : {
-    currentRecipe: RecipeData,
-	setEditMode : React.Dispatch<React.SetStateAction<boolean>>
-}) {
+export default function EditRecipeForm () {
+	const {id} = useParams();
+	if (!id) throw Error("no recipe id");
+
+	const {user} = useAuth();
+
 	let navigate = useNavigate();
 
+	const {data, isLoading, isError} = useQuery({
+		queryKey: ['recipes', {id: id}],
+        queryFn: () => getRecipeById(id),
+		retry: 1
+	})
+
+	if (isLoading)
+        return (<p>Loading...</p>);
+
+	if (isError)
+        return (<p>Couldn't find the recipe</p>);
+
+	if (!user || user.id != data[0].user_id) {
+		return (<p>You can't edit this recipe</p>);
+	}
+
 	const [recipe, setRecipe] = useState({
-		id: currentRecipe.id || "",
-		title: currentRecipe.title || "",
-		user_id: currentRecipe.user_id || "",
-		content: currentRecipe.content || ""
+		id: data[0].id,
+		title: data[0].title,
+		user_id: data[0].user_id,
+		content: data[0].content
 	});
 
 	const updateRecipeMutation = useMutation({
 		mutationFn: updateRecipe,
 		onSuccess: () => {
-			setEditMode(false);
-			navigate(`/recipe/${currentRecipe.id}`);
+			navigate(`/recipe/${id}`);
 			alert('recipe updated successfully');
 		},
 		onError: () => alert('failed to update recipe :c ')

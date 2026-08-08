@@ -1,6 +1,6 @@
 import type { CommentData, LikeData } from "../DataInterfaces";
 
-export const getLikesAmount = async (recipe : string) => {
+export const getLikesByRecipe = async (recipe : string) => {
     const response = await fetch(`http://localhost:8080/api/likes?recipe=${recipe}`);
     if (!response.ok) {
             throw new Error('no recipe');
@@ -21,6 +21,20 @@ export const addLike = async (data: LikeData) => {
     return true;
 }
 
+export const deleteLike = async (data: LikeData) => {
+    const response = await fetch('http://localhost:8080/api/likes',
+        {   method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data),
+        }
+    );
+    if (!response.ok) {
+        throw new Error('failed to delete like')
+    }
+    return true;
+}
+
+
 export const getCommentsByRecipe = async (recipe : string) => {
     const response = await fetch(`http://localhost:8080/api/comments?recipe=${recipe}`);
     if (!response.ok) {
@@ -38,6 +52,16 @@ export const addComment = async (data: CommentData) => {
     );
     if (!response.ok) {
         throw new Error('failed to add comment');
+    }
+    return true;
+}
+
+export const deleteComment = async (id: string) => {
+    const response = await fetch(`http://localhost:8080/api/comments?id=${id}`,
+        { method: 'DELETE' }
+    );
+    if (!response.ok) {
+        throw new Error('failed to delete comment')
     }
     return true;
 }

@@ -28,19 +28,20 @@ export default function NewComment({
 		onError: () => alert('failed to add comment :c ')
 	});
 
-	const handleSubmit = () => {
+	const handleSubmit = (e) => {
+		e.preventDefault();
 		addCommentMutation.mutate({content: content, user_id: user.id, recipe_id: recipe_id});
 	};
 
 	return (
 		<div>
-			<form>
+			<form onSubmit={handleSubmit}>
 				<p>content:</p>
 				<input type="text" value={content} name="content" onChange={(e) => setContent(e.target.value)} />
+				<button type="submit" disabled={addCommentMutation.isPending}>
+					{addCommentMutation.isPending ? "Posting..." : "Post"}
+				</button>
 			</form>
-			<button onClick={handleSubmit} disabled={addCommentMutation.isPending}>
-				{addCommentMutation.isPending ? "Posting..." : "Post"}
-			</button>
 		</div>
 	);
 };

@@ -67,9 +67,10 @@ app.get('/api/userinfo', async (req, res) => {
 	res.status(200).json(rows);
 });
 
+
 app.get('/api/likes', async (req, res) => {
 	const recipe = parseInt(req.query.recipe);
-	const rows = await db.getLikesAmount(recipe);
+	const rows = await db.getLikesByRecipe(recipe);
 	res.status(200).json(rows);
 });
 app.post('/api/likes', async (req, res) => {
@@ -77,6 +78,12 @@ app.post('/api/likes', async (req, res) => {
 	await db.addLike(user_id, recipe_id);
 	res.status(201).send('like added');
 });
+app.delete('/api/likes', async (req, res) => {
+	const { user_id, recipe_id } = req.body;
+	await db.deleteLike(user_id, recipe_id);
+	res.status(200).send('deleted like');
+});
+
 
 app.get('/api/comments', async (req, res) => {
 	const recipe = parseInt(req.query.recipe);
@@ -88,6 +95,12 @@ app.post('/api/comments', async (req, res) => {
 	await db.addComment(recipe_id, user_id, content);
 	res.status(201).send('comment added');
 });
+app.delete('/api/comments', async (req, res) => {
+	const id = parseInt(req.query.id);
+	await db.deleteComment(id);
+	res.status(200).send('deleted comment');
+});
+
 
 app.listen(port, () => {
 	console.log ("funguje")
