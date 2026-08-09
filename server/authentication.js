@@ -1,4 +1,6 @@
 import pg from 'pg';
+import jwt from 'jsonwebtoken';
+
 const {Pool} = pg;
 const pool = new Pool({
     user: 'server',
@@ -7,6 +9,7 @@ const pool = new Pool({
     password: 'password',
     port: 5432,
 })
+const JWT_SECRET = "placeholder secret"
 
 const login = async (req, res) => {
     const { username, password } = req.body;
@@ -18,9 +21,11 @@ const login = async (req, res) => {
         if(result.rowCount == 0)
             throw new Error("invalid credentials");
         if(result.rows[0].passwordhash != password)
-            return res.status(401).json({error: 'invalid credentials'});
+            throw new Error("invalid credentials");
 
-        const token = "placeholder token";
+        const token = jwt.sign(result.rows[0], JWT_SECRET, {
+            expiresIn: '1h'
+        });
         const data = {...result.rows[0], token}
         res.json(data);
     } catch (error) {
@@ -28,6 +33,25 @@ const login = async (req, res) => {
   }
 }
 
+const processToken = (req, res, next) => {
+    const token = req.headers['authorization'];
+    if(!token) {
+        req.user = {role: 'VIEWER'}
+        next();
+    }
+
+    else try {
+        req.user = jwt.verify(token, JWT_SECRET);
+        next();
+    } catch (error) {
+        throw new Error("unauthorized");
+    }
+
+}
+
+
+
 export {
-    login
+    login,
+    processToken
 }

@@ -53,7 +53,7 @@ export default function EditRecipeForm () {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		updateRecipeMutation.mutate(recipe);
+		updateRecipeMutation.mutate({recipe: recipe, token: user.token});
 	};
 
 	return (

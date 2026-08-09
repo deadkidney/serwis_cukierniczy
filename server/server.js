@@ -11,6 +11,7 @@ const app = express();
 const port = 8080;
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(auth.processToken);
 
 app.post('/api/login', auth.login)
 

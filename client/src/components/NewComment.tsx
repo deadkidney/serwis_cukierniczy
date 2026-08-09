@@ -30,7 +30,7 @@ export default function NewComment({
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		addCommentMutation.mutate({content: content, user_id: user.id, recipe_id: recipe_id});
+		addCommentMutation.mutate({data: {content: content, user_id: user.id, recipe_id: recipe_id}, token: user.token});
 	};
 
 	return (

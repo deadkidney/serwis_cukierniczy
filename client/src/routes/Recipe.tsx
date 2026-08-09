@@ -61,8 +61,8 @@ export default function Recipe() {
 		<div key={data[0].id}>
 			{user && user.id != data[0].user_id && (
 				likes.data.map((like) => like.user_id).includes(user.id) ? 
-				<button onClick={() => deleteLikeMutation.mutate({recipe_id: id, user_id: user.id})}>unlike</button> :
-				<button onClick={() => addLikeMutation.mutate({recipe_id: id, user_id: user.id})}>like</button>
+				<button onClick={() => deleteLikeMutation.mutate({data: {recipe_id: id, user_id: user.id}, token: user.token})}>unlike</button> :
+				<button onClick={() => addLikeMutation.mutate({data: {recipe_id: id, user_id: user.id}, token: user.token})}>like</button>
 				)}
 			<h3>{data[0].title}</h3>
 			<p>Likes: {likes.data.length}</p>
@@ -72,7 +72,7 @@ export default function Recipe() {
 			{ user && user.id == data[0].user_id &&
 				<Link to={`/edit/recipe/${id}`}>edit</Link>}
 			{ user && user.id == data[0].user_id &&
-				<button onClick={() => deleteRecipeMutation.mutate(id)}>delete</button>}
+				<button onClick={() => deleteRecipeMutation.mutate({id: id, token: user.token})}>delete</button>}
 			<Link to={`/comments/recipe/${id}`}>Comments</Link>
 		</div>
 	);

@@ -46,10 +46,13 @@ export const getLikedRecipes = async (user_id: string) => {
     return response.json();
 }
 
-export const addRecipe = async (recipe: RecipeData) => {
+export const addRecipe = async ({recipe, token} : {recipe: RecipeData, token: string}) => {
     const response = await fetch("http://localhost:8080/api/recipes",
         {   method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `${token}`
+            },
             body: JSON.stringify(recipe),
         }
     );
@@ -59,10 +62,13 @@ export const addRecipe = async (recipe: RecipeData) => {
     return response.json();
 }
 
-export const updateRecipe = async (recipe: RecipeData) => {
+export const updateRecipe = async ({recipe, token} : {recipe: RecipeData, token: string}) => {
     const response = await fetch(`http://localhost:8080/api/recipeinfo?id=${recipe.id}`,
         {   method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `${token}`
+            },
             body: JSON.stringify(recipe),
         }
     );
@@ -72,9 +78,14 @@ export const updateRecipe = async (recipe: RecipeData) => {
     return true;
 }
 
-export const deleteRecipe = async (id: string) => {
+export const deleteRecipe = async ({id, token} : {id: string, token: string}) => {
     const response = await fetch(`http://localhost:8080/api/recipeinfo?id=${id}`,
-        { method: 'DELETE' }
+        {   method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `${token}`
+            },
+        }
     );
     if (!response.ok) {
         throw new Error('failed to delete recipe')

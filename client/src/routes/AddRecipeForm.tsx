@@ -37,7 +37,7 @@ export default function AddRecipeForm() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		addRecipeMutation.mutate(recipe);
+		addRecipeMutation.mutate({recipe: recipe, token: user.token});
 	};
 
 	return (
