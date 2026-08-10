@@ -50,14 +50,14 @@ app.get('/api/recipeinfo', async (req, res) => {
 	res.status(200).json(rows);
 });
 app.post('/api/recipes', async (req, res) => {
-	const { title, user_id, content } = req.body;
-	const rows = await db.createRecipe(title, user_id, content);
+	const { title, user_id, content, portions } = req.body;
+	const rows = await db.createRecipe(title, user_id, content, portions);
 	res.status(201).json({id: rows[0].id});
 });
 app.put('/api/recipeinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
-	const { title, content } = req.body;
-	await db.updateRecipe(id, title, content);
+	const { title, content, portions, accepted } = req.body;
+	await db.updateRecipe(id, title, content, portions, accepted);
 	res.status(200).send(`updated recipe ${id}`);
 });
 app.delete('/api/recipeinfo', async (req, res) => {

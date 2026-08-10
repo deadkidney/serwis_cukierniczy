@@ -39,9 +39,7 @@ export default function User() {
 
 	return (
 		<div>
-			<div key={user.data[0].id}>
-				<h3>{user.data[0].username}</h3>
-			</div>
+			<h3>{user.data[0].username}</h3>
 			{authored.isSuccess && 
 				<section>
 					<p>My recipes:</p>

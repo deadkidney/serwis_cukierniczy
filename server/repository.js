@@ -59,7 +59,7 @@ const getFilteredRecipes = async (search) => {
 const getRecipeById = async (id) => {
     try {
         const result = await pool.query(
-            'SELECT recipes.id, recipes.title, recipes.content, recipes.user_id, users.username FROM recipes JOIN users ON recipes.user_id = users.id WHERE recipes.id = $1', 
+            'SELECT recipes.id, recipes.title, recipes.content, recipes.user_id, users.username, recipes.portions, recipes.accepted FROM recipes JOIN users ON recipes.user_id = users.id WHERE recipes.id = $1', 
             [id]
         );
         if(result.rowCount == 0)
@@ -70,11 +70,11 @@ const getRecipeById = async (id) => {
     }
 }
 
-const createRecipe = async (title, user_id, content) => {
+const createRecipe = async (title, user_id, content, portions) => {
     try {
         const result = await pool.query(
-        'INSERT INTO recipes (title, user_id, content) VALUES ($1, $2, $3) RETURNING *',
-        [title, user_id, content]
+        'INSERT INTO recipes (title, user_id, content, portions, accepted) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [title, user_id, content, portions, false]
         );
         return result.rows;
     } catch (error) {
@@ -82,11 +82,11 @@ const createRecipe = async (title, user_id, content) => {
   }
 }
 
-const updateRecipe = async (id, title, content) => {
+const updateRecipe = async (id, title, content, portions, accepted) => {
     try {
         await pool.query(
-        'UPDATE recipes SET title = $1, content = $2 WHERE id = $3',
-        [title, content, id]
+        'UPDATE recipes SET title = $1, content = $2, portions = $3, accepted = $4 WHERE id = $5',
+        [title, content, portions, accepted, id]
         );
         return true;
     } catch (error) {

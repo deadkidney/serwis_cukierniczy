@@ -15,6 +15,8 @@ export interface RecipeData {
     title: string;
     content: string;
     user_id: string;
+    portions: number;
+    accepted: boolean;
 }
 
 export interface UserShort {

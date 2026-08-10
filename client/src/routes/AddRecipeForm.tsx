@@ -16,7 +16,9 @@ export default function AddRecipeForm() {
 		id: "",
 		title: "",
 		user_id: user.id,
-		content: ""
+		content: "",
+		portions: 1,
+		accepted: false
 	});
 
 	const addRecipeMutation = useMutation({
@@ -42,14 +44,17 @@ export default function AddRecipeForm() {
 
 	return (
 		<div>
+			<h2>Add new recipe</h2>
 			<form onSubmit={handleSubmit}>
-				<p>title:</p>
-				<input type="text" value={recipe.title} name="title" onChange={onChangeHandler} required/>
-				<p>content:</p>
-				<input type="text" value={recipe.content} name="content" onChange={onChangeHandler} required/>
-			<button type="submit" disabled={addRecipeMutation.isPending}>
-				{addRecipeMutation.isPending ? "Adding Recipe..." : "Add Recipe"}
-			</button>
+				<label htmlFor="title">title:</label>
+				<input type="text" value={recipe.title} id="title" name="title" onChange={onChangeHandler} required/>
+				<label htmlFor="content">content:</label>
+				<textarea value={recipe.content} id="content" name="content" onChange={onChangeHandler} rows={10} cols={50} required/>
+				<label htmlFor="portions">portions:</label>
+				<input type="number" value={recipe.portions} id="portions" name="portions" onChange={onChangeHandler} required/>
+				<button type="submit" disabled={addRecipeMutation.isPending}>
+					{addRecipeMutation.isPending ? "Adding Recipe..." : "Add Recipe"}
+				</button>
 			</form>
 		</div>
 	);
