@@ -140,6 +140,50 @@ const getUserById = async (id) => {
     }
 }
 
+const changeRole = async (id) => {
+    try {
+        await pool.query(
+        'UPDATE users SET role = $1 WHERE id = $2',
+        ['ADMIN', id]
+        );
+        return true;
+    } catch (error) {
+        throw new Error("can't update user");
+  }
+}
+
+const deleteUser = async (id) => {
+    try {
+        await pool.query(
+            'DELETE FROM likes WHERE user_id = $1',
+            [id]
+        );
+        await pool.query(
+            'DELETE FROM comments WHERE user_id = $1',
+            [id]
+        );
+        await pool.query(
+            'DELETE FROM likes USING recipes WHERE likes.recipe_id = recipes.id AND recipes.user_id = $1',
+            [id]
+        );
+        await pool.query(
+            'DELETE FROM comments USING recipes WHERE comments.recipe_id = recipes.id AND recipes.user_id = $1',
+            [id]
+        );
+        await pool.query(
+            'DELETE FROM recipes WHERE recipes.user_id = $1',
+            [id]
+        );
+        await pool.query(
+            'DELETE FROM users WHERE id = $1',
+            [id]
+        );
+        return true;
+    } catch (error) {
+        throw new Error("can't delete user");
+    }
+}
+
 //LIKE QUERIES
 const getLikesByRecipe = async (recipe) => {
     try {
@@ -225,6 +269,8 @@ export {
     deleteRecipe,
     getUsers,
     getUserById,
+    changeRole,
+    deleteUser,
     getLikesByRecipe,
     addLike,
     deleteLike,

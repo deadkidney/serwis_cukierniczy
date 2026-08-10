@@ -8,6 +8,7 @@ import User from './routes/User';
 import CommentList from './routes/CommentList';
 import LoginForm from './routes/LoginForm';
 import RegistrationForm from './routes/RegistrationForm';
+import UsersAdmin from './routes/UsersAdmin';
 
 export default function App() {
 	return (
@@ -22,6 +23,7 @@ export default function App() {
 				<Route path="/login" element={<LoginForm/>}/>
 				<Route path="/register" element={<RegistrationForm/>}/>
 				<Route path="/user/:id" element={<User />} />
+				<Route path="/users" element={<UsersAdmin />} />
 				<Route path="*" element={<Navigate to="/" />}/>
 			</Routes>
 		</div>

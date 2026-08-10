@@ -76,6 +76,16 @@ app.get('/api/userinfo', async (req, res) => {
 	const rows = await db.getUserById(id);
 	res.status(200).json(rows);
 });
+app.put('/api/userinfo', async (req, res) => {
+	const id = parseInt(req.query.id);
+	await db.changeRole(id);
+	res.status(200).send(`updated user ${id}`);
+});
+app.delete('/api/userinfo', async (req, res) => {
+	const id = parseInt(req.query.id);
+	await db.deleteUser(id);
+	res.status(200).send(`deleted user ${id} and corresponding recipes`);
+});
 
 
 app.get('/api/likes', async (req, res) => {
