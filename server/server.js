@@ -13,7 +13,16 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(auth.processToken);
 
-app.post('/api/login', auth.login)
+app.post('/api/register', async (req, res) => {
+	const { username, password } = req.body;
+	const rows = await auth.register(username, password);
+	res.status(200).json(rows);
+});
+app.post('/api/login', async (req, res) => {
+	const { username, password } = req.body;
+	const rows = await auth.login(username, password);
+	res.status(200).json(rows);
+});
 
 
 app.get("/api/recipes", async (req, res) => {
