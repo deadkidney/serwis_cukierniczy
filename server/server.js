@@ -26,23 +26,31 @@ app.post('/api/login', async (req, res) => {
 
 
 app.get("/api/recipes", async (req, res) => {
-	const rows = await db.getRecipes();
-	res.status(200).json(rows);
-});
-app.get("/api/recipes/authored", async (req, res) => {
-	const author = parseInt(req.query.author);
-	const rows = await db.getRecipesByAuthor(author);
-	res.status(200).json(rows);
-});
-app.get("/api/recipes/liked", async (req, res) => {
-	const user = parseInt(req.query.user);
-	const rows = await db.getLikedRecipes(user);
-	res.status(200).json(rows);
+	const {page, limit} = req.query;
+	const rows = await db.getRecipes(page, limit);
+	const count = await db.getRecipesAmount();
+	res.status(200).json({rows, count});
 });
 app.get("/api/recipes/filtered", async (req, res) => {
 	const search = '%'+req.query.search+'%';
-	const rows = await db.getFilteredRecipes(search);
-	res.status(200).json(rows);
+	const {page, limit} = req.query;
+	const rows = await db.getFilteredRecipes(search, page, limit);
+	const count = await db.getFilteredRecipesAmount(search);
+	res.status(200).json({rows, count});
+});
+app.get("/api/recipes/authored", async (req, res) => {
+	const author = parseInt(req.query.author);
+	const {page, limit} = req.query;
+	const rows = await db.getRecipesByAuthor(author, page, limit);
+	const count = await db.getRecipesByAuthorAmount(author);
+	res.status(200).json({rows, count});
+});
+app.get("/api/recipes/liked", async (req, res) => {
+	const user = parseInt(req.query.user);
+	const {page, limit} = req.query;
+	const rows = await db.getLikedRecipes(user, page, limit);
+	const count = await db.getLikedRecipesAmount(user);
+	res.status(200).json({rows, count});
 });
 app.get('/api/recipeinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
