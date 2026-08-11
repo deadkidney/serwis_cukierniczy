@@ -2,12 +2,12 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './routes/Home';
 import Recipe from './routes/Recipe';
-import EditRecipeForm from './routes/EditRecipeForm';
-import AddRecipeForm from './routes/AddRecipeForm';
+import EditRecipeForm from './routes/forms/EditRecipeForm';
+import AddRecipeForm from './routes/forms/AddRecipeForm';
 import User from './routes/User';
 import CommentList from './routes/CommentList';
-import LoginForm from './routes/LoginForm';
-import RegistrationForm from './routes/RegistrationForm';
+import LoginForm from './routes/forms/LoginForm';
+import RegistrationForm from './routes/forms/RegistrationForm';
 import UsersAdmin from './routes/UsersAdmin';
 
 export default function App() {

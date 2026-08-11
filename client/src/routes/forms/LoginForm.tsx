@@ -1,40 +1,42 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { register } from "../utils/authenticationFunctions";
-import { useAuth } from "../authContext";
+import { login } from "../../utils/authenticationFunctions";
+import { useAuth } from "../../authContext";
 
-export default function RegistrationForm() {
+export default function LoginForm() {
     const {setUserData} = useAuth();
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const registrationMutation = useMutation({
-		mutationFn: register,
+    const loginMutation = useMutation({
+		mutationFn: login,
 		onSuccess: (data) => {
 			setUserData(data)
-            navigate(-2);
-			alert('registered and loged in successfully');
+            navigate(-1);
+			alert('loged in successfully');
 		},
-		onError: () => alert('failed to register :c')
+		onError: () => alert('failed to log in :c ')
 	});
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      registrationMutation.mutate({username: username, password: password});
+      loginMutation.mutate({username: username, password: password});
    };
 
 	return (
 		<div>
-            <h2>Register</h2>
+            <h2>Login</h2>
 			<form onSubmit={handleSubmit}>
 				<p>username:</p>
 				<input type="text" value={username} name="username" onChange={(e) => setUsername(e.target.value)} required/>
 				<p>password:</p>
 				<input type="password" value={password} name="password" onChange={(e) => setPassword(e.target.value)} required/>
-			<button type="submit">Register</button>
+			<button type="submit">Log in</button>
             </form>
+		<p>Don't have an account yet?</p>
+		<Link to='/register'>Register</Link>
 		</div>
 	);
 };

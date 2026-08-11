@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../authContext";
+import { useAuth } from "../../authContext";
 import { useMutation } from "@tanstack/react-query";
-import { addRecipe } from "../utils/recipeQueries";
+import { addRecipe } from "../../utils/recipeQueries";
 
 export default function AddRecipeForm() {
 	let navigate = useNavigate();

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getRecipeById, updateRecipe } from "../utils/recipeQueries";
-import { useAuth } from "../authContext";
+import { getRecipeById, updateRecipe } from "../../utils/recipeQueries";
+import { useAuth } from "../../authContext";
 
 export default function EditRecipeForm () {
 	const {id} = useParams();
