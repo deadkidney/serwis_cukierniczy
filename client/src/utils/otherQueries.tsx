@@ -1,7 +1,13 @@
-import type { CommentData, LikeData } from "../DataInterfaces";
+import type { CommentData, LikeData, RatingData } from "../DataInterfaces";
 
-export const getLikesByRecipe = async (recipe : string) => {
-    const response = await fetch(`http://localhost:8080/api/likes?recipe=${recipe}`);
+export const getIsLiked = async ({user_id, recipe_id, token} : {user_id: string, recipe_id: string, token: string}) => {
+    const response = await fetch(`http://localhost:8080/api/likes?user=${user_id}&recipe=${recipe_id}`,
+        {   
+            headers: {
+                'Authorization': `${token}`
+            },
+        }
+    );
     if (!response.ok) {
             throw new Error('no recipe');
     }
@@ -40,9 +46,61 @@ export const deleteLike = async ({data, token} : {data: LikeData, token: string}
     return true;
 }
 
+export const getRating = async ({user_id, recipe_id, token} : {user_id: string, recipe_id: string, token: string}) => {
+    const response = await fetch(`http://localhost:8080/api/ratings/my?user=${user_id}&recipe=${recipe_id}`,
+        {   headers: {
+                'Authorization': `${token}`
+            },
+        }
+    );
+    if (!response.ok) {
+            throw new Error('no recipe');
+    }
+    return response.json();
+}
 
-export const getCommentsByRecipe = async (recipe : string) => {
-    const response = await fetch(`http://localhost:8080/api/comments?recipe=${recipe}`);
+export const getRatingAverage = async (recipe_id: string) => {
+    const response = await fetch(`http://localhost:8080/api/ratings/avg?recipe=${recipe_id}`);
+    if (!response.ok) {
+            throw new Error('no recipe');
+    }
+    return response.json();
+}
+
+export const addRating = async ({data, token} : {data: RatingData, token: string}) => {
+    const response = await fetch("http://localhost:8080/api/ratings",
+        {   method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `${token}`
+            },
+            body: JSON.stringify(data),
+        }
+    );
+    if (!response.ok) {
+        throw new Error('failed to add rating');
+    }
+    return true;
+}
+
+export const deleteRating = async ({data, token} : {data: LikeData, token: string}) => {
+    const response = await fetch('http://localhost:8080/api/ratings',
+        {   method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `${token}`
+            },
+            body: JSON.stringify(data),
+        }
+    );
+    if (!response.ok) {
+        throw new Error('failed to delete rating')
+    }
+    return true;
+}
+
+export const getCommentsByRecipe = async (recipe_id : string) => {
+    const response = await fetch(`http://localhost:8080/api/comments?recipe=${recipe_id}`);
     if (!response.ok) {
             throw new Error('no recipe');
     }

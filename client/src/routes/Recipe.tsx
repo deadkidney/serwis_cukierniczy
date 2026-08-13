@@ -1,8 +1,9 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getRecipeById, deleteRecipe, updateRecipe } from "../utils/recipeQueries";
-import { addLike, deleteLike, getLikesByRecipe } from "../utils/otherQueries";
+import { getRatingAverage } from "../utils/otherQueries";
 import { useAuth } from "../authContext";
+import LikeAndRatingButtons from "../components/LikeAndRatingButtons";
 
 export default function Recipe() {
 	const {id} = useParams();
@@ -12,15 +13,15 @@ export default function Recipe() {
 	
 	let navigate = useNavigate();
 
-	const {data, isLoading, isError} = useQuery({
-		queryKey: ['recipes', {id: id}],
+	const {data, isLoading, isError, refetch} = useQuery({
+		queryKey: ['recipe', {id: id}],
         queryFn: () => getRecipeById(id),
 		retry: 1
 	})
-	
-	const likes = useQuery({
-		queryKey: ['likes', {recipe: id}],
-		queryFn: () => getLikesByRecipe(id),
+
+	const ratingavg = useQuery({
+		queryKey: ['ratingsavg', {recipe: id}],
+		queryFn: () => getRatingAverage(id),
 		retry: 1
 	})
 	
@@ -36,56 +37,34 @@ export default function Recipe() {
 	const acceptRecipeMutation = useMutation({
 		mutationFn: updateRecipe,
 		onSuccess: () => {
-			navigate(`/recipe/${id}`);
+			refetch();
 			alert('recipe updated successfully');
 		},
 		onError: () => alert('failed to update recipe :c ')
 	});
 
-	const addLikeMutation = useMutation({
-		mutationFn: addLike,
-		onSuccess: () => {
-			likes.refetch();
-			alert('recipe liked successfully');
-		},
-		onError: () => alert('failed to like recipe :c ')
-	});
-
-	const deleteLikeMutation = useMutation({
-		mutationFn: deleteLike,
-		onSuccess: () => {
-			likes.refetch();
-			alert('recipe unliked successfully');
-		},
-		onError: () => alert('failed to unlike recipe :c ')
-	});
-
-    if (isLoading || likes.isLoading)
+    if (isLoading || ratingavg.isLoading)
         return (<p>Loading...</p>);
 
     if (isError)
         return (<p>Couldn't find the recipe</p>);
 
-	if(data[0].accepted || user && (user.role == 'ADMIN' || user.id == data[0].user_id))
+	if(data.accepted || (user && (user.role == 'ADMIN' || user.id == data.user_id)))
 		return (
-			<div key={data[0].id}>
-				{user && user.id != data[0].user_id && (
-					likes.data.map((like) => like.user_id).includes(user.id) ? 
-					<button onClick={() => deleteLikeMutation.mutate({data: {recipe_id: id, user_id: user.id}, token: user.token})}>unlike</button> :
-					<button onClick={() => addLikeMutation.mutate({data: {recipe_id: id, user_id: user.id}, token: user.token})}>like</button>
-				)}
-				<h3>{data[0].title}</h3>
-				<p>Likes: {likes.data.length}</p>
-				<p>Portions: {data[0].portions}</p>
+			<div key={data.id}>
+				{user && user.id != data.user_id && <LikeAndRatingButtons recipe_id={id} user={user}/>}
+				<h3>{data.title}</h3>
+				<p>Rating Average: {ratingavg.data ? ratingavg.data : "This recipe hasn't been rated yet"}</p>
+				<p>Portions: {data.portions}</p>
 				<p>Author:</p>
-				<Link to={`/user/${data[0].user_id}`}>{data[0].username}</Link>
-				<p style={{whiteSpace: 'pre-wrap'}}>{data[0].content}</p>
-				{ user && user.id == data[0].user_id &&
+				<Link to={`/user/${data.user_id}`}>{data.username}</Link>
+				<p style={{whiteSpace: 'pre-wrap'}}>{data.content}</p>
+				{ user && user.id == data.user_id &&
 					<Link to={`/edit/recipe/${id}`}>edit</Link>}
-				{ user && user.id == data[0].user_id &&
+				{ user && user.id == data.user_id &&
 					<button onClick={() => deleteRecipeMutation.mutate({id: id, token: user.token})}>delete</button>}
-				{ !data[0].accepted && user && user.role == 'ADMIN' &&
-					<button onClick={() => acceptRecipeMutation.mutate({recipe: {...data[0], accepted: true}, token: user.token})}>accept recipe</button>}
+				{ !data.accepted && user && user.role == 'ADMIN' &&
+					<button onClick={() => acceptRecipeMutation.mutate({recipe: {...data, accepted: true}, token: user.token})}>accept recipe</button>}
 				<Link to={`/comments/recipe/${id}`}>Comments</Link>
 			</div>
 		);

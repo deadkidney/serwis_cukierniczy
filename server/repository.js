@@ -112,7 +112,7 @@ const getRecipeById = async (id) => {
         );
         if(result.rowCount == 0)
             throw new Error("can't find recipe by id");
-        return result.rows;
+        return result.rows[0];
     } catch (error) {
         throw new Error("can't get recipe by id");
     }
@@ -121,10 +121,10 @@ const getRecipeById = async (id) => {
 const createRecipe = async (title, user_id, content, portions) => {
     try {
         const result = await pool.query(
-        'INSERT INTO recipes (title, user_id, content, portions, accepted) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        'INSERT INTO recipes (title, user_id, content, portions, accepted) VALUES ($1, $2, $3, $4, $5) RETURNING id',
         [title, user_id, content, portions, false]
         );
-        return result.rows;
+        return result.rows[0].id;
     } catch (error) {
         throw new Error("can't create recipe");
   }
@@ -149,6 +149,10 @@ const deleteRecipe = async (id) => {
             [id]
         );
         await pool.query(
+            'DELETE FROM ratings WHERE recipe_id = $1',
+            [id]
+        );
+        await pool.query(
             'DELETE FROM comments WHERE recipe_id = $1',
             [id]
         );
@@ -166,7 +170,7 @@ const deleteRecipe = async (id) => {
 const getUsers = async () => {
     try {
         const result = await pool.query(
-            'SELECT * FROM users ORDER BY id DESC'
+            'SELECT id, username, role FROM users ORDER BY id DESC'
         );
         return result.rows;
     } catch (error) {
@@ -177,7 +181,7 @@ const getUsers = async () => {
 const getUserById = async (id) => {
     try {
         const result = await pool.query(
-            'SELECT * FROM users WHERE id = $1',
+            'SELECT id, username FROM users WHERE id = $1',
             [id]
         );
         if(result.rowCount == 0)
@@ -206,12 +210,20 @@ const deleteUser = async (id) => {
             'DELETE FROM likes WHERE user_id = $1',
             [id]
         );
+                await pool.query(
+            'DELETE FROM ratings WHERE user_id = $1',
+            [id]
+        );
         await pool.query(
             'DELETE FROM comments WHERE user_id = $1',
             [id]
         );
         await pool.query(
             'DELETE FROM likes USING recipes WHERE likes.recipe_id = recipes.id AND recipes.user_id = $1',
+            [id]
+        );
+         await pool.query(
+            'DELETE FROM ratings USING recipes WHERE ratings.recipe_id = recipes.id AND recipes.user_id = $1',
             [id]
         );
         await pool.query(
@@ -233,13 +245,13 @@ const deleteUser = async (id) => {
 }
 
 //LIKE QUERIES
-const getLikesByRecipe = async (recipe) => {
+const getIsLiked = async (recipe, user) => {
     try {
         const result = await pool.query(
-            'SELECT user_id FROM likes WHERE recipe_id = $1',
-            [recipe]
+            'SELECT COUNT(id) FROM likes WHERE recipe_id = $1 AND user_id = $2',
+            [recipe, user]
         );
-        return result.rows;
+        return result.rows[0].count;
     } catch (error) {
         throw new Error("can't get likes by recipe");
     }
@@ -266,6 +278,56 @@ const deleteLike = async (user_id, recipe_id) => {
         return true;
     } catch (error) {
         throw new Error("can't delete like");
+    }
+}
+
+//RATING QUERIES
+const getRatingAverage = async (recipe_id) => {
+    try {
+        const result = await pool.query(
+            'SELECT ROUND(AVG(value), 2) FROM ratings WHERE recipe_id = $1',
+            [recipe_id]
+        );
+        return result.rows[0].round;
+    } catch (error) {
+        throw new Error("can't get rating average");
+    }
+}
+const getRating = async (user_id, recipe_id) => {
+    try {
+        const result = await pool.query(
+            'SELECT value FROM ratings WHERE user_id = $1 AND recipe_id = $2',
+            [user_id, recipe_id]
+        );
+        if(result.rowCount == 0)
+            return 0;
+        else return result.rows[0].value;
+    } catch (error) {
+        throw new Error("can't get rating");
+    }
+}
+
+const addRating = async (user_id, recipe_id, value) => {
+    try {
+        await pool.query(
+        'INSERT INTO ratings (user_id, recipe_id, value) VALUES ($1, $2, $3)',
+        [user_id, recipe_id, value]
+        );
+        return true;
+    } catch (error) {
+        throw new Error("can't add rating");
+  }
+}
+
+const deleteRating = async (user_id, recipe_id) => {
+    try {
+        await pool.query(
+            'DELETE FROM ratings WHERE user_id = $1 AND recipe_id = $2',
+            [user_id, recipe_id]
+        );
+        return true;
+    } catch (error) {
+        throw new Error("can't delete rating");
     }
 }
 
@@ -323,9 +385,13 @@ export {
     getUserById,
     changeRole,
     deleteUser,
-    getLikesByRecipe,
+    getIsLiked,
     addLike,
     deleteLike,
+    getRatingAverage,
+    getRating,
+    addRating,
+    deleteRating,
     getCommentsByRecipe,
     addComment,
     deleteComment

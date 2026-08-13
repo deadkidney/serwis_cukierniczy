@@ -37,7 +37,7 @@ export default function CommentList() {
                     <div key={comment.id}>
                         <Link to={`/user/${comment.user_id}`}>{comment.username}</Link>
                         <p>{comment.content}</p>
-                        { user && user.id == comment.user_id &&
+                        { user && (user.id == comment.user_id || user.role === 'ADMIN') &&
 				            <button onClick={() => deleteCommentMutation.mutate({id: comment.id, token: user.token})}>delete</button>}
                     </div>
                 );

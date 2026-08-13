@@ -74,7 +74,7 @@ const processToken = (req, res, next) => {
         req.user = jwt.verify(token, JWT_SECRET);
         next();
     } catch (error) {
-        throw new Error("unauthorized");
+        throw new Error("wrong token");
     }
 }
 

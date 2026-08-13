@@ -27,18 +27,23 @@ export interface UserShort {
 export interface UserData {
     id: string;
     username: string;
-    passwordhash: string;
     role: string;
     token: string;
+}
+
+export interface LikeData {
+    user_id: string;
+    recipe_id: string;
+}
+
+export interface RatingData {
+    user_id: string;
+    recipe_id: string;
+    value: number
 }
 
 export interface CommentData {
     recipe_id: string;
     user_id: string;
     content: string;
-}
-
-export interface LikeData {
-    user_id: string;
-    recipe_id: string;
 }

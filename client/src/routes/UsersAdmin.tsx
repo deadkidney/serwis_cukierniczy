@@ -46,7 +46,7 @@ export default function UsersAdmin() {
                     <section key={u.id}>
                         <Link to={`/user/${u.id}`}>{u.username}</Link>
                         <p>{u.role}</p>
-                        {u.id != user.id && <button onClick={() => changeRoleMutation.mutate({id: u.id, token: user.token})}>make an admin</button>}
+                        {u.role != 'ADMIN' && <button onClick={() => changeRoleMutation.mutate({id: u.id, token: user.token})}>make an admin</button>}
                         <button onClick={() => deleteUserMutation.mutate({id: u.id, token: user.token})}>delete</button>
                     </section>
                 );

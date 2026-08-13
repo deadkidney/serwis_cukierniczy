@@ -59,23 +59,33 @@ app.get('/api/recipeinfo', async (req, res) => {
 });
 app.post('/api/recipes', async (req, res) => {
 	const { title, user_id, content, portions } = req.body;
-	const rows = await db.createRecipe(title, user_id, content, portions);
-	res.status(201).json({id: rows[0].id});
+	if(req.user.role === 'VIEVER' || req.user.id != user_id)
+		throw new Error('invalid credentials');
+	const id = await db.createRecipe(title, user_id, content, portions);
+	res.status(201).json({id});
 });
 app.put('/api/recipeinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
 	const { title, content, portions, accepted } = req.body;
+	const recipe = await db.getRecipeById(id);
+	if((req.user.role === 'VIEVER' || req.user.id != recipe[0].user_id) && req.user.role !== 'ADMIN')
+		throw new Error('invalid credentials');
 	await db.updateRecipe(id, title, content, portions, accepted);
 	res.status(200).send(`updated recipe ${id}`);
 });
 app.delete('/api/recipeinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
+	const recipe = await db.getRecipeById(id);
+	if((req.user.role === 'VIEVER' || req.user.id != recipe[0].user_id) && req.user.role !== 'ADMIN')
+		throw new Error('invalid credentials');
 	await db.deleteRecipe(id);
 	res.status(200).send(`deleted recipe ${id} and corresponding likes and comments`);
 });
 
 
 app.get('/api/users', async (req, res) => {
+	if(req.user.role !== 'ADMIN')
+		throw new Error('invalid credentials');
 	const rows = await db.getUsers();
 	res.status(200).json(rows);
 });
@@ -86,32 +96,67 @@ app.get('/api/userinfo', async (req, res) => {
 });
 app.put('/api/userinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
+	if(req.user.role !== 'ADMIN')
+		throw new Error('invalid credentials');
 	await db.changeRole(id);
 	res.status(200).send(`updated user ${id}`);
 });
 app.delete('/api/userinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
+	if((req.user.role === 'VIEVER' || req.user.id != id) && req.user.role !== 'ADMIN')
+		throw new Error('invalid credentials');
 	await db.deleteUser(id);
 	res.status(200).send(`deleted user ${id} and corresponding recipes`);
 });
 
-
 app.get('/api/likes', async (req, res) => {
-	const recipe = parseInt(req.query.recipe);
-	const rows = await db.getLikesByRecipe(recipe);
+	const { recipe, user } = req.query;
+	if(req.user.role === 'VIEVER' || req.user.id != user)
+		throw new Error('invalid credentials');
+	const rows = await db.getIsLiked(recipe, user);
 	res.status(200).json(rows);
 });
 app.post('/api/likes', async (req, res) => {
 	const { user_id, recipe_id } = req.body;
+	if(req.user.role === 'VIEVER' || req.user.id != user_id)
+		throw new Error('invalid credentials');
 	await db.addLike(user_id, recipe_id);
 	res.status(201).send('like added');
 });
 app.delete('/api/likes', async (req, res) => {
 	const { user_id, recipe_id } = req.body;
+	if(req.user.role === 'VIEVER' || req.user.id != user_id)
+		throw new Error('invalid credentials');
 	await db.deleteLike(user_id, recipe_id);
 	res.status(200).send('deleted like');
 });
 
+app.get('/api/ratings/my', async (req, res) => {
+	const { user, recipe } = req.query;
+	if(req.user.role === 'VIEVER' || req.user.id != user)
+		throw new Error('invalid credentials');
+	const value = await db.getRating(user, recipe);
+	res.status(200).json(value);
+});
+app.get('/api/ratings/avg', async (req, res) => {
+	const recipe = parseInt(req.query.recipe);
+	const avg = await db.getRatingAverage(recipe);
+	res.status(200).json(avg);
+});
+app.post('/api/ratings', async (req, res) => {
+	const { user_id, recipe_id, value } = req.body;
+	if(req.user.role === 'VIEVER' || req.user.id != user_id)
+		throw new Error('invalid credentials');
+	await db.addRating(user_id, recipe_id, value);
+	res.status(201).send('rating added');
+});
+app.delete('/api/ratings', async (req, res) => {
+	const { user_id, recipe_id } = req.body;
+	if(req.user.role === 'VIEVER' || req.user.id != user_id)
+		throw new Error('invalid credentials');
+	await db.deleteRating(user_id, recipe_id);
+	res.status(200).send('deleted rating');
+});
 
 app.get('/api/comments', async (req, res) => {
 	const recipe = parseInt(req.query.recipe);
@@ -120,11 +165,15 @@ app.get('/api/comments', async (req, res) => {
 });
 app.post('/api/comments', async (req, res) => {
 	const { recipe_id, user_id, content } = req.body;
+	if(req.user.role === 'VIEVER' || req.user.id != user_id)
+		throw new Error('invalid credentials');
 	await db.addComment(recipe_id, user_id, content);
 	res.status(201).send('comment added');
 });
 app.delete('/api/comments', async (req, res) => {
 	const id = parseInt(req.query.id);
+	if((req.user.role === 'VIEVER' || req.user.id != recipe[0].user_id) && req.user.role !== 'ADMIN')
+		throw new Error('invalid credentials');
 	await db.deleteComment(id);
 	res.status(200).send('deleted comment');
 });
