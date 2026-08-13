@@ -20,7 +20,7 @@ export default function LoginForm() {
 		onError: () => alert('failed to log in :c ')
 	});
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
       e.preventDefault();
       loginMutation.mutate({username: username, password: password});
    };

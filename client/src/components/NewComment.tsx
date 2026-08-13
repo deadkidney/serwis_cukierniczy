@@ -28,7 +28,7 @@ export default function NewComment({
 		onError: () => alert('failed to add comment :c ')
 	});
 
-	const handleSubmit = (e) => {
+	const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		addCommentMutation.mutate({data: {content: content, user_id: user.id, recipe_id: recipe_id}, token: user.token});
 	};

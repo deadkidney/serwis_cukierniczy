@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../authContext";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { addRecipe } from "../../utils/recipeQueries";
+import type { RecipeData } from "../../DataInterfaces";
+import { getTags } from "../../utils/otherQueries";
 
 export default function AddRecipeForm() {
 	let navigate = useNavigate();
@@ -10,16 +12,23 @@ export default function AddRecipeForm() {
 
 	if (!user)
 		return <Link to='/login'>Log in to add recipe</Link>
-
 	
-	const [recipe, setRecipe] = useState({
+	const [recipe, setRecipe] = useState<RecipeData>({
 		id: "",
 		title: "",
 		user_id: user.id,
 		content: "",
 		portions: 1,
+		tags: [],
 		accepted: false
 	});
+
+	const possibletags = useQuery({
+		queryKey: ['tags'],
+        queryFn: () => getTags(),
+		retry: 1,
+		staleTime: 60000
+	})
 
 	const addRecipeMutation = useMutation({
 		mutationFn: addRecipe,
@@ -30,17 +39,31 @@ export default function AddRecipeForm() {
 		onError: () => alert('failed to add recipe :c ')
 	});
 
-	const onChangeHandler = (e) => {
+	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
 		setRecipe(prev => ({
 			...prev,
 			[e.target.name]: e.target.value
 		}))
 	}
 
-	const handleSubmit = (e) => {
+	const onChangeTagHandler = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
+		setRecipe((prev) => ({
+			...prev,
+			tags: e.target.checked ? [...prev.tags, e.target.value] : prev.tags.filter((tag) => tag != e.target.value)
+		}))
+	}
+
+	const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		addRecipeMutation.mutate({recipe: recipe, token: user.token});
 	};
+
+	if (possibletags.isLoading)
+        return (<p>Loading...</p>);
+
+	if (possibletags.isError)
+        return (<p>Something went wrong</p>);
+
 
 	return (
 		<div>
@@ -52,6 +75,16 @@ export default function AddRecipeForm() {
 				<textarea value={recipe.content} id="content" name="content" onChange={onChangeHandler} rows={10} cols={50} required/>
 				<label htmlFor="portions">portions:</label>
 				<input type="number" value={recipe.portions} id="portions" name="portions" onChange={onChangeHandler} required/>
+				<label>tags:</label>
+				<div>
+					{possibletags.data.map((tag) => {
+							return (<div key={tag.id}>
+								<input type="checkbox" value={tag.name} id={tag.id} name="tags" onChange={onChangeTagHandler} checked={recipe.tags.includes(tag.name)}/>
+								<label htmlFor={tag.id}>{tag.name}</label>
+							</div>)
+					})}
+				</div>
+				
 				<button type="submit" disabled={addRecipeMutation.isPending}>
 					{addRecipeMutation.isPending ? "Adding Recipe..." : "Add Recipe"}
 				</button>

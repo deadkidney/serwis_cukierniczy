@@ -8,14 +8,16 @@ interface Ingredient {
 export interface RecipeShort {
     id: string;
     title: string;
+    tags: string[];
 }
 
 export interface RecipeData {
     id: string;
     title: string;
-    content: string;
     user_id: string;
+    content: string;
     portions: number;
+    tags: string[];
     accepted: boolean;
 }
 

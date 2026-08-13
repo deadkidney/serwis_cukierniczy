@@ -15,6 +15,7 @@ export default function Header() {
     return(
         <section>
             <h1>Przepisy!!</h1>
+            <button onClick={() => navigate(-1)}>BACK</button>
             <Link to='/'>main </Link>
             <Link to='/newrecipe'> Create new recipe </Link>
             {user? <button onClick={logout}>Log out</button> : <Link to='/login'>Log in</Link>}

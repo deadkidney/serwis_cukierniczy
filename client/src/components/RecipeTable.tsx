@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { RecipeShort } from '../DataInterfaces';
+import Tags from "./Tags";
 
 export default function RecipeTable({
     recipes
@@ -18,6 +19,7 @@ export default function RecipeTable({
                         <Link to={`/recipe/${recipe.id}`}>
                             <h3>{recipe.title}</h3>
                         </Link>
+                        <Tags tags={recipe.tags}/>
                     </div> 
                 );
             })}

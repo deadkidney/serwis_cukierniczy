@@ -4,6 +4,7 @@ import { getRecipeById, deleteRecipe, updateRecipe } from "../utils/recipeQuerie
 import { getRatingAverage } from "../utils/otherQueries";
 import { useAuth } from "../authContext";
 import LikeAndRatingButtons from "../components/LikeAndRatingButtons";
+import Tags from "../components/Tags";
 
 export default function Recipe() {
 	const {id} = useParams();
@@ -58,10 +59,11 @@ export default function Recipe() {
 				<p>Portions: {data.portions}</p>
 				<p>Author:</p>
 				<Link to={`/user/${data.user_id}`}>{data.username}</Link>
+				<Tags tags={data.tags}/>
 				<p style={{whiteSpace: 'pre-wrap'}}>{data.content}</p>
 				{ user && user.id == data.user_id &&
 					<Link to={`/edit/recipe/${id}`}>edit</Link>}
-				{ user && user.id == data.user_id &&
+				{ user && (user.id == data.user_id || user.role == 'ADMIN') &&
 					<button onClick={() => deleteRecipeMutation.mutate({id: id, token: user.token})}>delete</button>}
 				{ !data.accepted && user && user.role == 'ADMIN' &&
 					<button onClick={() => acceptRecipeMutation.mutate({recipe: {...data, accepted: true}, token: user.token})}>accept recipe</button>}

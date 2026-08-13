@@ -20,7 +20,7 @@ export default function RegistrationForm() {
 		onError: () => alert('failed to register :c')
 	});
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
       e.preventDefault();
       registrationMutation.mutate({username: username, password: password});
    };

@@ -25,17 +25,12 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-app.get("/api/recipes", async (req, res) => {
-	const {page, limit} = req.query;
-	const rows = await db.getRecipes(page, limit);
-	const count = await db.getRecipesAmount();
-	res.status(200).json({rows, count});
-});
 app.get("/api/recipes/filtered", async (req, res) => {
-	const search = '%'+req.query.search+'%';
-	const {page, limit} = req.query;
-	const rows = await db.getFilteredRecipes(search, page, limit);
-	const count = await db.getFilteredRecipesAmount(search);
+	const {search, tags, page, limit} = req.query;
+	const searchfilter = '%'+search+'%';
+	const tagfilter = tags ? tags.split(',').map((tag) => `AND '${tag}' = ANY (tags)`).join(' ') : '';
+	const rows = await db.getFilteredRecipes(searchfilter, tagfilter, page, limit);
+	const count = await db.getFilteredRecipesAmount(searchfilter, tagfilter);
 	res.status(200).json({rows, count});
 });
 app.get("/api/recipes/authored", async (req, res) => {
@@ -58,25 +53,25 @@ app.get('/api/recipeinfo', async (req, res) => {
 	res.status(200).json(rows);
 });
 app.post('/api/recipes', async (req, res) => {
-	const { title, user_id, content, portions } = req.body;
+	const { title, user_id, content, portions, tags } = req.body;
 	if(req.user.role === 'VIEVER' || req.user.id != user_id)
 		throw new Error('invalid credentials');
-	const id = await db.createRecipe(title, user_id, content, portions);
+	const id = await db.createRecipe(title, user_id, content, portions, tags);
 	res.status(201).json({id});
 });
 app.put('/api/recipeinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
-	const { title, content, portions, accepted } = req.body;
+	const { title, content, portions, tags, accepted } = req.body;
 	const recipe = await db.getRecipeById(id);
-	if((req.user.role === 'VIEVER' || req.user.id != recipe[0].user_id) && req.user.role !== 'ADMIN')
+	if((req.user.role === 'VIEVER' || req.user.id != recipe.user_id) && req.user.role !== 'ADMIN')
 		throw new Error('invalid credentials');
-	await db.updateRecipe(id, title, content, portions, accepted);
+	await db.updateRecipe(id, title, content, portions, tags, accepted);
 	res.status(200).send(`updated recipe ${id}`);
 });
 app.delete('/api/recipeinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
 	const recipe = await db.getRecipeById(id);
-	if((req.user.role === 'VIEVER' || req.user.id != recipe[0].user_id) && req.user.role !== 'ADMIN')
+	if((req.user.role === 'VIEVER' || req.user.id != recipe.user_id) && req.user.role !== 'ADMIN')
 		throw new Error('invalid credentials');
 	await db.deleteRecipe(id);
 	res.status(200).send(`deleted recipe ${id} and corresponding likes and comments`);
@@ -176,6 +171,11 @@ app.delete('/api/comments', async (req, res) => {
 		throw new Error('invalid credentials');
 	await db.deleteComment(id);
 	res.status(200).send('deleted comment');
+});
+
+app.get('/api/tags', async (req, res) => {
+	const rows = await db.getTags();
+	res.status(200).json(rows);
 });
 
 

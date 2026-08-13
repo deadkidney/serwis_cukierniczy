@@ -136,3 +136,11 @@ export const deleteComment = async ({id, token} : {id: string, token: string}) =
     }
     return true;
 }
+
+export const getTags = async () => {
+    const response = await fetch("http://localhost:8080/api/tags");
+    if (!response.ok) {
+            throw new Error('no tags');
+    }
+    return response.json();
+}
