@@ -50,22 +50,22 @@ app.get("/api/recipes/liked", async (req, res) => {
 app.get('/api/recipeinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
 	const rows = await db.getRecipeById(id);
-	res.status(200).json(rows);
+	res.status(200).json({...rows, ingredients: JSON.parse(rows.ingredients)});
 });
 app.post('/api/recipes', async (req, res) => {
-	const { title, user_id, content, portions, tags } = req.body;
+	const { title, user_id, ingredients, content, portions, tags } = req.body;
 	if(req.user.role === 'VIEVER' || req.user.id != user_id)
 		throw new Error('invalid credentials');
-	const id = await db.createRecipe(title, user_id, content, portions, tags);
+	const id = await db.createRecipe(title, user_id, JSON.stringify(ingredients), content, portions, tags);
 	res.status(201).json({id});
 });
 app.put('/api/recipeinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
-	const { title, content, portions, tags, accepted } = req.body;
+	const { title, content, ingredients, portions, tags, accepted } = req.body;
 	const recipe = await db.getRecipeById(id);
 	if((req.user.role === 'VIEVER' || req.user.id != recipe.user_id) && req.user.role !== 'ADMIN')
 		throw new Error('invalid credentials');
-	await db.updateRecipe(id, title, content, portions, tags, accepted);
+	await db.updateRecipe(id, title, JSON.stringify(ingredients), content, portions, tags, accepted);
 	res.status(200).send(`updated recipe ${id}`);
 });
 app.delete('/api/recipeinfo', async (req, res) => {

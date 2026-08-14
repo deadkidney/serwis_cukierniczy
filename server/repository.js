@@ -87,7 +87,7 @@ const getLikedRecipesAmount = async (user) => {
 const getRecipeById = async (id) => {
     try {
         const result = await pool.query(
-            'SELECT recipes.id, recipes.title, recipes.user_id, users.username, recipes.content, recipes.portions, recipes.tags, recipes.accepted FROM recipes JOIN users ON recipes.user_id = users.id WHERE recipes.id = $1', 
+            'SELECT recipes.id, recipes.title, recipes.user_id, users.username, recipes.ingredients, recipes.content, recipes.portions, recipes.tags, recipes.accepted FROM recipes JOIN users ON recipes.user_id = users.id WHERE recipes.id = $1', 
             [id]
         );
         if(result.rowCount == 0)
@@ -98,11 +98,11 @@ const getRecipeById = async (id) => {
     }
 }
 
-const createRecipe = async (title, user_id, content, portions, tags) => {
+const createRecipe = async (title, user_id, ingredients, content, portions, tags) => {
     try {
         const result = await pool.query(
-        'INSERT INTO recipes (title, user_id, content, portions, tags, accepted) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        [title, user_id, content, portions, tags, false]
+        'INSERT INTO recipes (title, user_id, ingredients, content, portions, tags, accepted) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+        [title, user_id, ingredients, content, portions, tags, false]
         );
         return result.rows[0].id;
     } catch (error) {
@@ -110,11 +110,11 @@ const createRecipe = async (title, user_id, content, portions, tags) => {
   }
 }
 
-const updateRecipe = async (id, title, content, portions, tags, accepted) => {
+const updateRecipe = async (id, title, ingredients, content, portions, tags, accepted) => {
     try {
         await pool.query(
-        'UPDATE recipes SET title = $1, content = $2, portions = $3, tags = $4, accepted = $5 WHERE id = $6',
-        [title, content, portions, tags, accepted, id]
+        'UPDATE recipes SET title = $1, ingredients =$2, content = $3, portions = $4, tags = $5, accepted = $6 WHERE id = $7',
+        [title, ingredients, content, portions, tags, accepted, id]
         );
         return true;
     } catch (error) {

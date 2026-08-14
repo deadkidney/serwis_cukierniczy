@@ -1,4 +1,4 @@
-interface Ingredient {
+export interface Ingredient {
     id: number;
     name: string;
     amount: number;
@@ -15,6 +15,7 @@ export interface RecipeData {
     id: string;
     title: string;
     user_id: string;
+    ingredients: Ingredient[];
     content: string;
     portions: number;
     tags: string[];

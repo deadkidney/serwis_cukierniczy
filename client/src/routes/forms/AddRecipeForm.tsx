@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { addRecipe } from "../../utils/recipeQueries";
 import type { RecipeData } from "../../DataInterfaces";
 import { getTags } from "../../utils/otherQueries";
+import IngredientsInput from "../../components/IngredientsInput";
 
 export default function AddRecipeForm() {
 	let navigate = useNavigate();
@@ -17,6 +18,7 @@ export default function AddRecipeForm() {
 		id: "",
 		title: "",
 		user_id: user.id,
+		ingredients: [],
 		content: "",
 		portions: 1,
 		tags: [],
@@ -71,6 +73,7 @@ export default function AddRecipeForm() {
 			<form onSubmit={handleSubmit}>
 				<label htmlFor="title">title:</label>
 				<input type="text" value={recipe.title} id="title" name="title" onChange={onChangeHandler} required/>
+				<IngredientsInput ingredients={recipe.ingredients} setRecipe={setRecipe}/>
 				<label htmlFor="content">content:</label>
 				<textarea value={recipe.content} id="content" name="content" onChange={onChangeHandler} rows={10} cols={50} required/>
 				<label htmlFor="portions">portions:</label>

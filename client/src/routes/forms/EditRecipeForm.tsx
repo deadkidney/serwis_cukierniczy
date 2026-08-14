@@ -5,6 +5,7 @@ import { getRecipeById, updateRecipe } from "../../utils/recipeQueries";
 import { useAuth } from "../../authContext";
 import type { RecipeData } from "../../DataInterfaces";
 import { getTags } from "../../utils/otherQueries";
+import IngredientsInput from "../../components/IngredientsInput";
 
 export default function EditRecipeForm () {
 	const {id} = useParams();
@@ -31,6 +32,7 @@ export default function EditRecipeForm () {
 			id: data ? data.id : "",
 			title: (data && data.title) ? data.title : "",
 			user_id: (data && data.user_id) ? data.user_id : "",
+			ingredients: (data && data.ingredients) ? data.ingredients : [],
 			content: (data && data.content) ? data.content : "",
 			portions: (data && data.portions) ? data.portions : 1,
 			tags: (data && data.tags) ? data.tags : [],
@@ -81,6 +83,7 @@ export default function EditRecipeForm () {
 			<form onSubmit={handleSubmit}>
 				<label htmlFor="title">title:</label>
 				<input type="text" value={recipe.title} id="title" name="title" onChange={onChangeHandler} />
+				<IngredientsInput ingredients={recipe.ingredients} setRecipe={setRecipe}/>
 				<label htmlFor="content">content:</label>
 				<textarea value={recipe.content} id="content" name="content" onChange={onChangeHandler} rows={10} cols={50} />
 				<label htmlFor="portions">portions:</label>

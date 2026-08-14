@@ -60,6 +60,9 @@ export default function Recipe() {
 				<p>Author:</p>
 				<Link to={`/user/${data.user_id}`}>{data.username}</Link>
 				<Tags tags={data.tags}/>
+				{data.ingredients.map((ingredient) => 
+					<p key={ingredient.id}>{ingredient.amount} {ingredient.unit} {ingredient.name}</p>
+				)}
 				<p style={{whiteSpace: 'pre-wrap'}}>{data.content}</p>
 				{ user && user.id == data.user_id &&
 					<Link to={`/edit/recipe/${id}`}>edit</Link>}
