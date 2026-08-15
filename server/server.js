@@ -47,6 +47,14 @@ app.get("/api/recipes/liked", async (req, res) => {
 	const count = await db.getLikedRecipesAmount(user);
 	res.status(200).json({rows, count});
 });
+
+app.get("/api/recipes/notaccepted", async (req, res) => {
+	const {page, limit} = req.query;
+	const rows = await db.getNotAcceptedRecipes(page, limit);
+	const count = await db.getNotAcceptedRecipesAmount();
+	res.status(200).json({rows, count});
+});
+
 app.get('/api/recipeinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
 	const rows = await db.getRecipeById(id);
@@ -81,8 +89,10 @@ app.delete('/api/recipeinfo', async (req, res) => {
 app.get('/api/users', async (req, res) => {
 	if(req.user.role !== 'ADMIN')
 		throw new Error('invalid credentials');
-	const rows = await db.getUsers();
-	res.status(200).json(rows);
+	const {page, limit} = req.query;
+	const rows = await db.getUsers(page, limit);
+	const count = await db.getUsersAmount();
+	res.status(200).json({rows, count});
 });
 app.get('/api/userinfo', async (req, res) => {
 	const id = parseInt(req.query.id);
@@ -167,7 +177,8 @@ app.post('/api/comments', async (req, res) => {
 });
 app.delete('/api/comments', async (req, res) => {
 	const id = parseInt(req.query.id);
-	if((req.user.role === 'VIEVER' || req.user.id != recipe[0].user_id) && req.user.role !== 'ADMIN')
+	const comment = await db.getCommentById(id);
+	if((req.user.role === 'VIEVER' || req.user.id != comment.user_id) && req.user.role !== 'ADMIN')
 		throw new Error('invalid credentials');
 	await db.deleteComment(id);
 	res.status(200).send('deleted comment');

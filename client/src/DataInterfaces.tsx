@@ -50,3 +50,8 @@ export interface CommentData {
     user_id: string;
     content: string;
 }
+
+export interface TagData {
+    id: string;
+    name: string
+}

@@ -1,10 +1,12 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link as RouterLink } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getRecipeById, deleteRecipe, updateRecipe } from "../utils/recipeQueries";
 import { getRatingAverage } from "../utils/otherQueries";
 import { useAuth } from "../authContext";
 import LikeAndRatingButtons from "../components/LikeAndRatingButtons";
 import Tags from "../components/Tags";
+import Ingredients from "../components/Ingredients";
+import { Button, Container, Rating, Stack, Typography } from "@mui/material";
 
 export default function Recipe() {
 	const {id} = useParams();
@@ -52,38 +54,25 @@ export default function Recipe() {
 
 	if(data.accepted || (user && (user.role == 'ADMIN' || user.id == data.user_id)))
 		return (
-			<div key={data.id}>
+			<Container maxWidth="md">
 				{user && user.id != data.user_id && <LikeAndRatingButtons recipe_id={id} user={user}/>}
 				<h3>{data.title}</h3>
-				<p>Rating Average: {ratingavg.data ? ratingavg.data : "This recipe hasn't been rated yet"}</p>
-				<p>Portions: {data.portions}</p>
-				<p>Author:</p>
-				<Link to={`/user/${data.user_id}`}>{data.username}</Link>
+				<Stack direction='row' spacing={{sm: 1, md: 2}}>
+					<Button component={RouterLink} to={`/user/${data.user_id}`}>{data.username}</Button>
+					<Typography variant='button'>Portions: {data.portions}</Typography>
+					<Rating name="read-only" value={ratingavg.data ? ratingavg.data : 0} readOnly max={10} precision={0.1} />
+				</Stack>
 				<Tags tags={data.tags}/>
-				{data.ingredients.map((ingredient) => 
-					<p key={ingredient.id}>{ingredient.amount} {ingredient.unit} {ingredient.name}</p>
-				)}
+				<Ingredients ingredients={data.ingredients}/>
 				<p style={{whiteSpace: 'pre-wrap'}}>{data.content}</p>
 				{ user && user.id == data.user_id &&
-					<Link to={`/edit/recipe/${id}`}>edit</Link>}
+					<Button component={RouterLink} to={`/edit/recipe/${id}`}>edit</Button>}
 				{ user && (user.id == data.user_id || user.role == 'ADMIN') &&
-					<button onClick={() => deleteRecipeMutation.mutate({id: id, token: user.token})}>delete</button>}
+					<Button onClick={() => deleteRecipeMutation.mutate({id: id, token: user.token})}>delete</Button>}
 				{ !data.accepted && user && user.role == 'ADMIN' &&
-					<button onClick={() => acceptRecipeMutation.mutate({recipe: {...data, accepted: true}, token: user.token})}>accept recipe</button>}
-				<Link to={`/comments/recipe/${id}`}>Comments</Link>
-			</div>
+					<Button onClick={() => acceptRecipeMutation.mutate({recipe: {...data, accepted: true}, token: user.token})}>accept recipe</Button>}
+				<Button component={RouterLink} to={`/comments/recipe/${id}`}>Comments</Button>
+			</Container>
 		);
 	else return (<p>You can't view this recipe</p>);
 };
-
-/*
-<ul>
-					{recipe.ingredients.map((ingredient) => {
-					return(
-						<li key={ingredient.id}>
-							{ingredient.name}: {ingredient.amount} {ingredient.unit}
-						</li>
-					);
-				})}
-				</ul>
-*/

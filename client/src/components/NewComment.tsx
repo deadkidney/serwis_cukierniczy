@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "../authContext";
 import { addComment } from "../utils/otherQueries";
+import { Button, TextField } from "@mui/material";
 
 export default function NewComment({
     recipe_id,
@@ -34,14 +35,11 @@ export default function NewComment({
 	};
 
 	return (
-		<div>
-			<form onSubmit={handleSubmit}>
-				<p>content:</p>
-				<input type="text" value={content} name="content" onChange={(e) => setContent(e.target.value)} />
-				<button type="submit" disabled={addCommentMutation.isPending}>
-					{addCommentMutation.isPending ? "Posting..." : "Post"}
-				</button>
-			</form>
-		</div>
+		<form onSubmit={handleSubmit}>
+			<TextField multiline value={content} id="content" label="comment" onChange={(e) => setContent(e.target.value)} minRows={5} maxRows={20} required/>
+			<Button type="submit" disabled={addCommentMutation.isPending}>
+				{addCommentMutation.isPending ? "Posting..." : "Post"}
+			</Button>
+		</form>
 	);
 };

@@ -39,7 +39,7 @@ const getFilteredRecipesAmount = async (search, tagfilter) => {
 const getRecipesByAuthor = async (author, page, limit) => {
     try {
         const result = await pool.query(
-            'SELECT id, title, tags FROM recipes WHERE user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
+            'SELECT id, title, tags FROM recipes WHERE accepted AND user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
             [author, limit, page*limit]
         );
         return result.rows;
@@ -51,12 +51,12 @@ const getRecipesByAuthor = async (author, page, limit) => {
 const getRecipesByAuthorAmount = async (author) => {
     try {
         const result = await pool.query(
-            'SELECT COUNT(id) FROM recipes WHERE user_id = $1',
+            'SELECT COUNT(id) FROM recipes WHERE accepted AND user_id = $1',
             [author]
         );
         return result.rows[0].count;
     } catch (error) {
-        throw new Error("can't get authored recipes");
+        throw new Error("can't get authored recipes amount");
     }
 }
 
@@ -80,7 +80,30 @@ const getLikedRecipesAmount = async (user) => {
         );
         return result.rows[0].count;
     } catch (error) {
-        throw new Error("can't get liked recipes");
+        throw new Error("can't get liked recipes amount");
+    }
+}
+
+const getNotAcceptedRecipes = async (page, limit) => {
+    try {
+        const result = await pool.query(
+            'SELECT id, title, tags FROM recipes WHERE NOT accepted ORDER BY id DESC LIMIT $1 OFFSET $2',
+            [limit, page*limit]
+        );
+        return result.rows;
+    } catch (error) {
+        throw new Error("can't get not accepted recipes");
+    }
+}
+
+const getNotAcceptedRecipesAmount = async (user) => {
+    try {
+        const result = await pool.query(
+            'SELECT COUNT(id) FROM recipes WHERE NOT accepted'
+        );
+        return result.rows[0].count;
+    } catch (error) {
+        throw new Error("can't get not accepted recipes amount");
     }
 }
 
@@ -147,14 +170,26 @@ const deleteRecipe = async (id) => {
 }
 
 // USER QUERIES
-const getUsers = async () => {
+const getUsers = async (page, limit) => {
     try {
         const result = await pool.query(
-            'SELECT id, username, role FROM users ORDER BY id DESC'
+            'SELECT id, username, role FROM users ORDER BY id DESC LIMIT $1 OFFSET $2',
+            [limit, page*limit]
         );
         return result.rows;
     } catch (error) {
         throw new Error("can't get users");
+    }
+}
+
+const getUsersAmount = async () => {
+    try {
+        const result = await pool.query(
+            'SELECT COUNT(id) FROM users'
+        );
+        return result.rows[0].count;
+    } catch (error) {
+        throw new Error("can't get users amount");
     }
 }
 
@@ -166,7 +201,7 @@ const getUserById = async (id) => {
         );
         if(result.rowCount == 0)
             throw new Error("can't find user by id");
-        return result.rows;
+        return result.rows[0];
     } catch (error) {
         throw new Error("can't get user by id");
     }
@@ -324,6 +359,20 @@ const getCommentsByRecipe = async (recipe_id) => {
     }
 }
 
+const getCommentById = async (id) => {
+    try {
+        const result = await pool.query(
+            'SELECT id, content, user_id FROM comments WHERE id = $1',
+            [id]
+        );
+        if(result.rowCount == 0)
+            throw new Error("can't find comment by id");
+        return result.rows[0];
+    } catch (error) {
+        throw new Error("can't get comment");
+    }
+}
+
 const addComment = async (recipe_id, user_id, content) => {
     try {
         await pool.query(
@@ -367,11 +416,14 @@ export {
     getRecipesByAuthorAmount,
     getLikedRecipes,
     getLikedRecipesAmount,
+    getNotAcceptedRecipes,
+    getNotAcceptedRecipesAmount,
     getRecipeById,
     createRecipe,
     updateRecipe,
     deleteRecipe,
     getUsers,
+    getUsersAmount,
     getUserById,
     changeRole,
     deleteUser,
@@ -383,6 +435,7 @@ export {
     addRating,
     deleteRating,
     getCommentsByRecipe,
+    getCommentById,
     addComment,
     deleteComment,
     getTags

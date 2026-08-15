@@ -1,20 +1,27 @@
+import { Chip, Stack } from '@mui/material';
 
 export default function Tags({
-    tags
+	tags
 } : {
-    tags: string[]
+	tags: string[]
 }) {
 
-    if (tags.length == 0)
-        return (<p>This recipe has no tags</p>);
+	if (tags.length == 0)
+		return (<p>This recipe has no tags</p>);
 
-    return(
-        <section>
-            <p>Tags:</p>
-            {tags.map((tag) => {
-                return <p key={tag}>{tag}</p>
-            })}
-        </section>
-        
-    );
+	return(
+		<Stack
+            direction="row"
+            spacing={1}
+            sx={{
+                justifyContent: "flex-start",
+                alignItems: "center",
+	        }}
+        >
+			{tags.map((tag) => {
+				return <Chip key={tag} label={tag} size="small"/>
+			})}
+		</Stack>
+		
+	);
 }

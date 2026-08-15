@@ -1,5 +1,5 @@
-export const getAllUsers = async (token: string) => {
-    const response = await fetch("http://localhost:8080/api/users",
+export const getAllUsers = async (page: number, limit: number, token: string) => {
+    const response = await fetch(`http://localhost:8080/api/users?page=${page}&limit=${limit}`,
         {   headers: {
                 'Authorization': `${token}`
             },

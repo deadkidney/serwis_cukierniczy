@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../../utils/authenticationFunctions";
 import { useAuth } from "../../authContext";
+import { Box, Button, Card, CardContent, TextField, Typography } from "@mui/material";
 
 export default function LoginForm() {
     const {setUserData} = useAuth();
@@ -26,17 +27,23 @@ export default function LoginForm() {
    };
 
 	return (
-		<div>
-            <h2>Login</h2>
+		<Box>
+		<Card variant="outlined" sx={{ maxWidth: 345 }}>
+			<CardContent>
+			<Typography variant="h3">
+				Login
+			</Typography>
 			<form onSubmit={handleSubmit}>
-				<p>username:</p>
-				<input type="text" value={username} name="username" onChange={(e) => setUsername(e.target.value)} required/>
-				<p>password:</p>
-				<input type="password" value={password} name="password" onChange={(e) => setPassword(e.target.value)} required/>
-			<button type="submit">Log in</button>
+				<TextField value={username} label="Username" onChange={(e) => setUsername(e.target.value)} required/>
+				<TextField value={password} label="Password" onChange={(e) => setPassword(e.target.value)} required type="password"/>
+				<Button type="submit">Log in</Button>
             </form>
-		<p>Don't have an account yet?</p>
-		<Link to='/register'>Register</Link>
-		</div>
+			</CardContent>
+		</Card>
+		<Typography variant="subtitle1">
+			Don't have an account yet?
+		</Typography>
+		<Button component={RouterLink} to='/register' >Register</Button>
+		</Box>
 	);
 };

@@ -24,6 +24,14 @@ export const getLikedRecipes = async (user_id: string, page: number, limit: numb
     return response.json();
 }
 
+export const getNotAcceptedRecipes = async (page: number, limit: number) => {
+    const response = await fetch(`http://localhost:8080/api/recipes/notaccepted?page=${page}&limit=${limit}`);
+    if (!response.ok) {
+            throw new Error('failed to find recipes');
+    }
+    return response.json();
+}
+
 export const getRecipeById = async (id : string) => {
     const response = await fetch(`http://localhost:8080/api/recipeinfo?id=${id}`);
     if (!response.ok) {

@@ -1,9 +1,11 @@
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getCommentsByRecipe, deleteComment } from "../utils/otherQueries";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../authContext";
 import NewComment from "../components/NewComment";
+import { Button, Container, IconButton, Stack, Typography } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function CommentList() {
     const {id} = useParams();
@@ -11,7 +13,7 @@ export default function CommentList() {
 
     const {user} = useAuth();
 
-    const {data, isLoading, isError, isSuccess, refetch} = useQuery({
+    const {data, isLoading, isError, refetch} = useQuery({
 		queryKey: ['comments', {recipe: id}],
 		queryFn: () => getCommentsByRecipe(id),
 		retry: 1
@@ -25,24 +27,30 @@ export default function CommentList() {
 		},
 		onError: () => alert('failed to delete')
 	});
+  
+    if (isLoading)
+        return (<p>Loading...</p>);
+
+    if (isError)
+        return (<p>Couldn't find the comments</p>);
 
     return (
-        <div>
-            <Link to={`/recipe/${id}`}>Back to recipe</Link>
-            {isLoading && <p> Loading... </p>}
-			{isError && <p> Couldn't find the comments </p>}
-            {isSuccess && data.length == 0 && <p>Nothing here...</p>}
-            {isSuccess && data.map((comment) => {
+        <Container>
+            <Button component={RouterLink} to={`/recipe/${id}`}>Back to recipe</Button>
+            <NewComment recipe_id={id} refetch={refetch} />
+            { data.length == 0 && <p>Nothing here...</p>}
+            {data.map((comment) => {
                 return(
-                    <div key={comment.id}>
-                        <Link to={`/user/${comment.user_id}`}>{comment.username}</Link>
-                        <p>{comment.content}</p>
+                    <Stack key={comment.id} direction='row'>
+                        <Button component={RouterLink} to={`/user/${comment.user_id}`}>{comment.username}</Button>
+                        <Typography variant="body1">{comment.content}</Typography>
                         { user && (user.id == comment.user_id || user.role === 'ADMIN') &&
-				            <button onClick={() => deleteCommentMutation.mutate({id: comment.id, token: user.token})}>delete</button>}
-                    </div>
+				            <IconButton onClick={() => deleteCommentMutation.mutate({id: comment.id, token: user.token})}>
+                                <DeleteIcon/>
+                            </IconButton>}
+                    </Stack>
                 );
             })}
-            <NewComment recipe_id={id} refetch={refetch} />
-        </div>
+        </Container>
     );
 };
