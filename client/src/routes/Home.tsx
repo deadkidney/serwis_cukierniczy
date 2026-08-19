@@ -36,8 +36,16 @@ export default function Home() {
         return (<Alert severity='error'>Something went wrong</Alert>);
 
 	return (
-       	<div>
-			<Stack direction={{sm: 'column', md: 'row'}} spacing={2} sx={{p: 2}}>
+       	<Container sx={{padding: 2}}>
+			<Stack 
+				direction={{sm: 'column', md: 'row'}} 
+				spacing={2}
+				sx={{
+					justifyContent: "center",
+					alignItems: "center",
+					paddingBottom: 2
+				}}
+			>
 				<Button onClick={() => {setSearchVal(''); setTags([]), setPage(1)}}>
 					<ClearIcon />
 				</Button>
@@ -46,13 +54,14 @@ export default function Home() {
 					label="Search field"
 					type="search"
 					onChange={(e) => setSearchVal(e.target.value)} 
+					fullWidth
 				/>
 				<ToggleButtonGroup
 					value={tags}
 					onChange={(e, newtags) => setTags(newtags)}
 					aria-label="tags"
-					size="small"
 					color="secondary"
+					
 				>
 					{possibletags.data.map((tag: TagData) => 
 						<ToggleButton key={tag.id} value={tag.name} aria-label={tag.name}>
@@ -64,14 +73,12 @@ export default function Home() {
 					<SearchIcon />
 				</Button>
 			</Stack>
-			<Container sx={{p:2}}>
 				<RecipeTable recipes={data.rows}/>
 				<Pagination 
 					count={Math.ceil(data.count/limit)} 
 					page={page} 
 					onChange={(e: React.ChangeEvent<unknown>, value: number) => setPage(value)}
 				/>
-			</Container>
-        </div>
+        </Container>
     )
 }

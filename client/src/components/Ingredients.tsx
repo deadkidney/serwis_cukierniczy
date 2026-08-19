@@ -1,30 +1,35 @@
-import { Button, Checkbox, FormControlLabel, FormGroup, FormLabel, Stack, TextField } from "@mui/material";
-import type { Ingredient } from "../DataInterfaces";
 import { useState } from "react";
+import type { Ingredient } from "../DataInterfaces";
+import { Checkbox, FormControlLabel, FormGroup, FormLabel, IconButton, Stack, TextField } from "@mui/material";
+import ClearIcon from '@mui/icons-material/Clear';
 
 export default function Ingredients({
-    ingredients,
-    portions
+	ingredients,
+	portions
 } : {
-    ingredients: Ingredient[],
-    portions: string
+	ingredients: Ingredient[],
+	portions: string
 }) {
-    const [newPortions, setNewPortions] = useState(portions);
+	const [newPortions, setNewPortions] = useState(portions);
 
-    return(
-        <Stack spacing={2}>
-            <TextField value={newPortions} id="portions" label="Choose your portions" onChange={(e) => setNewPortions(e.target.value)}/>
-            <Button type="button" onClick={() => setNewPortions(portions)}>Reset</Button>
-            <FormGroup>
-                <FormLabel>
-                    Ingredients:
-                </FormLabel>
-                {ingredients.map((ingredient) =>
-                    <FormControlLabel key={ingredient.id} control={<Checkbox />} 
-                        label={`${ingredient.amount * parseFloat(newPortions) / parseFloat(portions)} ${ingredient.unit} ${ingredient.name}`} />
-                )}
-            </FormGroup>
-        </Stack>
-        
-    );
+	return(
+		<Stack spacing={2}>
+			<Stack direction="row" spacing={1}>
+				<TextField value={newPortions} id="portions" label="Choose your portions" onChange={(e) => setNewPortions(e.target.value)}/>
+				<IconButton type="button" onClick={() => setNewPortions(portions)}>
+					<ClearIcon/>
+				</IconButton>
+			</Stack>
+			<FormGroup>
+				<FormLabel>
+					Ingredients:
+				</FormLabel>
+				{ingredients.map((ingredient) =>
+					<FormControlLabel key={ingredient.id} control={<Checkbox color="secondary"/>} 
+						label={`${ingredient.amount * parseFloat(newPortions) / parseFloat(portions)} ${ingredient.unit} ${ingredient.name}`} />
+				)}
+			</FormGroup>
+		</Stack>
+		
+	);
 }

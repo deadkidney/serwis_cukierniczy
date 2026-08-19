@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { addLike, addRating, deleteLike, deleteRating, getIsLiked, getRating } from "../utils/otherQueries";
 import type { UserData } from "../DataInterfaces";
 import LoadingScreen from "./LoadingScreen";
-import { Alert, Button, IconButton, Rating } from "@mui/material";
+import { Alert, Button, IconButton, Rating, Stack } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
@@ -66,7 +66,14 @@ export default function LikeAndRatingButtons({
         return (<Alert severity='error'>Something went wrong </Alert>);
 
 		return (
-			<div>
+			<Stack
+					direction='row'
+					spacing={1}
+					sx={{
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
 				{ isLiked.data != 0 ? 
 					<IconButton onClick={() => deleteLikeMutation.mutate({data: {recipe_id, user_id: user.id}, token: user.token})} color="secondary">
 						<FavoriteIcon/>
@@ -88,6 +95,6 @@ export default function LikeAndRatingButtons({
                 { myRating.data != 0 &&
 					<Button onClick={() => deleteRatingMutation.mutate({data: {recipe_id, user_id: user.id}, token: user.token})}>delete my rating</Button>
 				}
-			</div>
+			</Stack>
 		);
 };

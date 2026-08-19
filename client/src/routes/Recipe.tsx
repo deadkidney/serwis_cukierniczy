@@ -7,7 +7,7 @@ import LikeAndRatingButtons from "../components/LikeAndRatingButtons";
 import Tags from "../components/Tags";
 import Ingredients from "../components/Ingredients";
 import LoadingScreen from "../components/LoadingScreen";
-import { Alert, Button, Container, Divider, Rating, Stack, Typography } from "@mui/material";
+import { Alert, Button, Divider, Rating, Stack, Typography } from "@mui/material";
 
 export default function Recipe() {
 	const {id} = useParams();
@@ -53,11 +53,25 @@ export default function Recipe() {
 
 	if(data.accepted || (user && (user.role == 'ADMIN' || user.id == data.user_id)))
 		return (
-			<Container maxWidth="md">
+			<Stack 
+				spacing={0.5}
+				sx={{
+						justifyContent: "center",
+						alignItems: "center",
+						padding: 2
+					}}
+			>
 				{data.accepted && user && user.id != data.user_id && <LikeAndRatingButtons recipe_id={id} user={user} ratingAvgRefetch={ratingavg.refetch}/>}
 				<Typography variant="h4">{data.title}</Typography>
 				{!data.accepted && <Typography variant='button' color="secondary">not accepted</Typography>}
-				<Stack direction='row' spacing={{sm: 1, md: 2}}>
+				<Stack
+					direction='row'
+					spacing={{sm: 2, md: 4}}
+					sx={{
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
 					<Button component={RouterLink} to={`/user/${data.user_id}`}>{data.username}</Button>
 					<Typography variant='button'>Portions: {data.portions}</Typography>
 					<Rating name="read-only" value={ratingavg.data ? ratingavg.data : 0} readOnly precision={0.1} />
@@ -65,11 +79,15 @@ export default function Recipe() {
 				<Tags tags={data.tags}/>
 				<Stack
 					direction={{sm: 'column', md: 'row'}}
-					spacing={{sm: 2, md: 6}}
+					spacing={{sm: 2, md: 4}}
 					divider={<Divider orientation="vertical" flexItem />}
+					sx={{
+						justifyContent: "space-between",
+						alignItems: "flex-start",
+					}}
 				>
 					<Ingredients ingredients={data.ingredients} portions={data.portions}/>
-					<Typography style={{whiteSpace: 'pre-wrap'}}>{data.content}</Typography>
+					<Typography sx={{whiteSpace: 'pre-wrap'}}>{data.content}</Typography>
 				</Stack>
 				<Stack direction='row'>
 					{user && user.id == data.user_id &&
@@ -80,7 +98,7 @@ export default function Recipe() {
 						<Button onClick={() => acceptRecipeMutation.mutate({recipe: {...data, accepted: true}, token: user.token})}>accept recipe</Button>}
 					<Button component={RouterLink} to={`/comments/recipe/${id}`}>Comments</Button>
 				</Stack>
-			</Container>
+			</Stack>
 		);
-	else return (<Alert severity="info">You can't view this recipe</Alert>);
+	else return (<Alert severity="info" color="secondary">You can't view this recipe</Alert>);
 };

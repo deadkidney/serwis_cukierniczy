@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { register } from "../../utils/authenticationFunctions";
 import { useAuth } from "../../authContext";
-import { Button, Card, CardContent, TextField, Typography } from "@mui/material";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 
 export default function RegistrationForm() {
     const {setUserData} = useAuth();
@@ -26,17 +26,23 @@ export default function RegistrationForm() {
    };
 
 	return (
-		<Card variant="outlined" sx={{ maxWidth: 345 }}>
-			<CardContent>
-			<Typography variant="h3">
-				Register
+		<Stack
+			spacing={{sm: 2, md: 4}} 
+			sx={{
+				justifyContent: "center",
+				alignItems: "center",
+			}}
+		>
+			<Typography variant="h4" align="center">
+				Don't have an account yet?
 			</Typography>
 			<form onSubmit={handleSubmit}>
-				<TextField value={username} label="Username" onChange={(e) => setUsername(e.target.value)} required/>
-				<TextField value={password} label="Password" onChange={(e) => setPassword(e.target.value)} required type="password"/>
-				<Button type="submit">Register</Button>
+				<Stack>
+					<TextField value={username} label="Username" onChange={(e) => setUsername(e.target.value)} required fullWidth/>
+					<TextField type="password" value={password} label="Password" onChange={(e) => setPassword(e.target.value)} required fullWidth/>
+					<Button type="submit">Register</Button>
+				</Stack>
             </form>
-			</CardContent>
-		</Card>
+		</Stack>
 	);
 };

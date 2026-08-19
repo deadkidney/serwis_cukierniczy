@@ -50,30 +50,42 @@ export default function IngredientsInput({
 	const units = ['ml', 'l', 'g', 'cups', 'tablespoons', 'teaspoons', 'piece']
 	
 	return (
-		<div>
-			<Typography variant='h5'>Ingredients:</Typography>
+		<Stack spacing={2} sx={{alignItems: 'center'}}>
+			<Typography variant='h6'>Ingredients:</Typography>
 			<Stack 
-				direction="row"
+				direction={{sm: 'column', md: "row"}}
 				spacing={1}
 				sx={{
 					justifyContent: "flex-start",
 					alignItems: "center",
 				}}
 			>
-				<TextField value={ingredient.amount} name="amount" label="amount" onChange={onChangeHandler} fullWidth/>
-				<TextField select value={ingredient.unit} name="unit" label="unit" onChange={onChangeHandler} fullWidth>
+				<TextField value={ingredient.amount} name="amount" label="Amount" onChange={onChangeHandler} fullWidth/>
+				<TextField select value={ingredient.unit} name="unit" label="Unit" onChange={onChangeHandler} fullWidth>
 						{units.map((unit) => 
 						<MenuItem key={unit} value={unit}>{unit}</MenuItem>
 					)}
 				</TextField>
-				<TextField value={ingredient.name} name="name" label="name" onChange={onChangeHandler} fullWidth/>
+				<TextField value={ingredient.name} name="name" label="Name" onChange={onChangeHandler} fullWidth/>
 				<Button type="button" onClick={handleAddIngredient} fullWidth>
 					Add ingredient
 				</Button>
 			</Stack>
-			<div>
+			<Stack 
+				sx={{
+					justifyContent: "flex-start",
+					alignItems: "center",
+					width: 1
+				}}
+			>
 					{ingredients.map((ingredient) => 
-						<Stack direction='row' key={ingredient.id}>
+						<Stack direction='row' key={ingredient.id}
+							sx={{
+								justifyContent: "space-between",
+								alignItems: "center",
+								width: '50%'
+							}}
+						>
 							<Typography >
 								{ingredient.amount} {ingredient.unit} {ingredient.name}
 							</Typography>
@@ -82,8 +94,8 @@ export default function IngredientsInput({
 							</IconButton>
 						</Stack>
 					)}
-				<Alert severity="warning">Don't forget to add all ingredients before submitting!</Alert>
-			</div>
-		</div>
+			</Stack>
+			<Alert severity="warning" color='secondary'>Don't forget to add all ingredients before submitting!</Alert>
+		</Stack>
 	);
 };

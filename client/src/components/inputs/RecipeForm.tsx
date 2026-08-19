@@ -25,15 +25,15 @@ export default function RecipeForm({
 			<Stack
 				spacing={2}
 				sx={{
-					justifyContent: "flex-start",
+					justifyContent: "center",
 					alignItems: "center",
 				}}
 			>
-			<TextField value={recipe.title} id="title" label="Title" onChange={onChangeHandler} required/>
-			<IngredientsInput ingredients={recipe.ingredients} setRecipe={setRecipe}/>
-			<TextField multiline value={recipe.content} id="content" label="Content" onChange={onChangeHandler} minRows={10} maxRows={50} required/>
-			<TextField value={recipe.portions} id="portions" label="Portions" onChange={onChangeHandler} required/>
-			<TagsInput tags={recipe.tags} setRecipe={setRecipe}/>
+				<TextField value={recipe.title} id="title" label="Title" onChange={onChangeHandler} required fullWidth/>
+				<IngredientsInput ingredients={recipe.ingredients} setRecipe={setRecipe}/>
+				<TextField multiline value={recipe.content} id="content" label="Content" onChange={onChangeHandler} minRows={10} maxRows={50} required fullWidth/>
+				<TextField value={recipe.portions} id="portions" label="Portions" onChange={onChangeHandler} required/>
+				<TagsInput tags={recipe.tags} setRecipe={setRecipe}/>
 			</Stack>
 		</form>
 	);

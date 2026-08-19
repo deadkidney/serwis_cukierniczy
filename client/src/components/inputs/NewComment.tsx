@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { useAuth } from "../authContext";
-import { addComment } from "../utils/otherQueries";
-import { Button, TextField } from "@mui/material";
+import { useAuth } from "../../authContext";
+import { addComment } from "../../utils/otherQueries";
+import { Button, Stack, TextField } from "@mui/material";
 
 export default function NewComment({
     recipe_id,
@@ -35,10 +35,18 @@ export default function NewComment({
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<TextField multiline value={content} id="content" label="comment" onChange={(e) => setContent(e.target.value)} minRows={5} maxRows={20} required/>
-			<Button type="submit" disabled={addCommentMutation.isPending}>
-				{addCommentMutation.isPending ? "Posting..." : "Post"}
-			</Button>
+			<Stack 
+				direction='column'
+				sx={{
+					justifyContent: "space-between",
+					alignItems: "flex-end",
+				}}
+			>
+				<TextField multiline value={content} id="content" label="comment" onChange={(e) => setContent(e.target.value)} minRows={5} maxRows={20} required fullWidth/>
+				<Button type="submit" disabled={addCommentMutation.isPending} >
+					{addCommentMutation.isPending ? "Posting..." : "Post"}
+				</Button>
+			</Stack>
 		</form>
 	);
 };

@@ -7,7 +7,7 @@ export default function Tags({
 }) {
 
 	if (tags.length == 0)
-		return (<Chip label='This recipe has no tags'/>);
+		return (<Chip label='This recipe has no tags' color='secondary' size='small'/>);
 
 	return(
 		<Stack
@@ -16,10 +16,11 @@ export default function Tags({
             sx={{
                 justifyContent: "flex-start",
                 alignItems: "center",
+				padding: 2
 	        }}
         >
 			{tags.map((tag) => {
-				return <Chip key={tag} label={tag} />
+				return <Chip key={tag} label={tag} color='secondary' size='small'/>
 			})}
 		</Stack>
 		

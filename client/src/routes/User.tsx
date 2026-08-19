@@ -5,7 +5,7 @@ import { useState } from "react";
 import { getLikedRecipes, getRecipesByAuthor } from "../utils/recipeQueries";
 import RecipeTable from "../components/RecipeTable";
 import LoadingScreen from "../components/LoadingScreen";
-import { Alert, Container, Pagination, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Alert, Container, Pagination, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 
 export default function User() {
 	const {id} = useParams();
@@ -42,13 +42,17 @@ export default function User() {
         return (<Alert severity="error">Couldn't find the user</Alert>);
 
 	return (
-		<Container>
-			<h3>{user.data.username}</h3>
+		<Container sx={{padding: 2}}>
+			<Typography variant="h4" align="center">
+				{user.data.username}
+			</Typography>
 			<ToggleButtonGroup
 				value={kind}
 				exclusive
 				onChange={(e, kind) => setKind(kind)}
-				color="primary"
+				color="secondary"
+				fullWidth
+				sx={{padding: 2}}
 			>
 				<ToggleButton value="authored" aria-label='authored' >
 					Authored Recipes

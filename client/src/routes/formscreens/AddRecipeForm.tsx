@@ -5,14 +5,14 @@ import { useMutation } from "@tanstack/react-query";
 import { addRecipe } from "../../utils/recipeQueries";
 import type { RecipeData } from "../../DataInterfaces";
 import RecipeForm from "../../components/inputs/RecipeForm";
-import { Alert, Button, Card, Typography } from "@mui/material";
+import { Alert, Button, Stack, Typography } from "@mui/material";
 
 export default function AddRecipeForm() {
 	let navigate = useNavigate();
 	const {user} = useAuth();
 
 	if (!user)
-		return <Alert severity="info"> You need to <Button component={RouterLink} to='/login'>Log in</Button> to add a recipe</Alert>
+		return <Alert severity="info" color="secondary"> You need to <Button component={RouterLink} to='/login'>Log in</Button> to add a recipe</Alert>
 	
 	const [recipe, setRecipe] = useState<RecipeData>({
 		id: "",
@@ -41,20 +41,34 @@ export default function AddRecipeForm() {
 	};
 
 	return (
-		<Card variant="outlined" sx={{ maxWidth: 600 }}>
+		<Stack
+			spacing={2}
+			sx={{ 
+				alignItems: "center",
+				padding: 3
+			}}
+		>
 			<Typography variant="h3">
 				Create new recipe
 			</Typography>
-			<Alert severity="info">
+			<Alert severity="info" color="secondary">
 				After you add the recipe you'll have to wait for admin to accept it.
 			</Alert>
 			<RecipeForm recipe={recipe} setRecipe={setRecipe} handleSubmit={handleSubmit}/>
-			<Button type="submit" form="recipeForm" disabled={addRecipeMutation.isPending}>
-				{addRecipeMutation.isPending ? "Adding Recipe..." : "Add Recipe"}
-			</Button>
-			<Button type="button" onClick={() => navigate(-1)}>
-				Cancel
-			</Button>
-		</Card>
+			<Stack direction='row'
+				spacing={3}
+				sx={{
+					justifyContent: "space-evenly",
+					alignItems: "center",
+				}}
+			>
+				<Button type="submit" form="recipeForm" disabled={addRecipeMutation.isPending}>
+					{addRecipeMutation.isPending ? "Adding Recipe..." : "Add Recipe"}
+				</Button>
+				<Button type="button" onClick={() => navigate(-1)}>
+					Cancel
+				</Button>
+			</Stack>
+		</Stack>
 	);
 };

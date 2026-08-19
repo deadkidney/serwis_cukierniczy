@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../../utils/authenticationFunctions";
 import { useAuth } from "../../authContext";
-import { Box, Button, Card, CardContent, TextField, Typography } from "@mui/material";
+import { Button, Divider, Stack, TextField, Typography } from "@mui/material";
 import RegistrationForm from "./RegistrationForm";
 
 export default function LoginForm() {
@@ -27,23 +27,35 @@ export default function LoginForm() {
    };
 
 	return (
-		<Box>
-		<Card variant="outlined" sx={{ maxWidth: 345 }}>
-			<CardContent>
-			<Typography variant="h3">
+		<Stack
+			direction={{sm: 'column', md: 'row'}}
+			spacing={{sm: 2, md: 4}}
+			divider={<Divider orientation="vertical" flexItem />}
+			sx={{
+				justifyContent: "space-evenly",
+				alignItems: "center",
+				padding: 4
+			}}
+		>
+		<Stack
+			spacing={{sm: 2, md: 4}} 
+			sx={{
+				justifyContent: "center",
+				alignItems: "center",
+			}}
+		>
+			<Typography variant="h4">
 				Login
 			</Typography>
 			<form onSubmit={handleSubmit}>
-				<TextField value={username} label="Username" onChange={(e) => setUsername(e.target.value)} required/>
-				<TextField value={password} label="Password" onChange={(e) => setPassword(e.target.value)} required type="password"/>
-				<Button type="submit">Log in</Button>
+				<Stack>
+					<TextField value={username} label="Username" onChange={(e) => setUsername(e.target.value)} required fullWidth/>
+					<TextField type="password" value={password} label="Password" onChange={(e) => setPassword(e.target.value)} required fullWidth/>
+					<Button type="submit">Log in</Button>
+				</Stack>
             </form>
-			</CardContent>
-		</Card>
-		<Typography variant="h6">
-			Don't have an account yet?
-		</Typography>
+		</Stack>
 		<RegistrationForm/>
-		</Box>
+		</Stack>
 	);
 };

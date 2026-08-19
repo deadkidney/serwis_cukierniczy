@@ -23,7 +23,7 @@ export default function RecipesAdmin() {
 		return (<Alert severity='error'>Couldn't find the recipes</Alert>);
 
 	return (
-		<Container sx={{p:2}}>
+		<Container>
 			<RecipeTable recipes={data.rows}/>
 			<Pagination 
 				count={Math.ceil(data.count/limit)} 

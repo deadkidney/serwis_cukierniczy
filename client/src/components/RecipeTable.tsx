@@ -10,11 +10,11 @@ export default function RecipeTable({
 }) {
 
 	if (recipes.length == 0)
-		return (<Alert severity="info">No recipes here...</Alert>);
+		return (<Alert severity="info" color="secondary">No recipes here...</Alert>);
 
 	return(
-		<Box sx={{ flexGrow: 1, p: 1 }}>
-		<Grid container 
+		<Box sx={{ flexGrow: 1 }}>
+		<Grid container
 		spacing={2}
 		sx={{
 			justifyContent: "flex-start",
@@ -22,7 +22,7 @@ export default function RecipeTable({
 		}}
 		>
 			{recipes.map((recipe) => 
-				<Grid key={recipe.id} size={{xs : 12, sm: 6, md: 4, lg: 3}}>
+				<Grid key={recipe.id} size={{xs : 12, md: 4}}>
 					<Card>
 						<CardContent>
 							<Typography variant="h5">
