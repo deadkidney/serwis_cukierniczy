@@ -7,7 +7,6 @@ import AddRecipeForm from './routes/formscreens/AddRecipeForm';
 import User from './routes/User';
 import CommentList from './routes/CommentList';
 import LoginForm from './routes/formscreens/LoginForm';
-import RegistrationForm from './routes/formscreens/RegistrationForm';
 import Admin from './routes/Admin';
 
 export default function App() {
@@ -21,7 +20,6 @@ export default function App() {
 				<Route path="/edit/recipe/:id" element={<EditRecipeForm />} />
 				<Route path="/newrecipe" element={<AddRecipeForm />} />
 				<Route path="/login" element={<LoginForm/>}/>
-				<Route path="/register" element={<RegistrationForm/>}/>
 				<Route path="/user/:id" element={<User />} />
 				<Route path="admin" element={<Admin />} />
 				<Route path="*" element={<Navigate to="/" />}/>

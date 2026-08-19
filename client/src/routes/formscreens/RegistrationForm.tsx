@@ -15,10 +15,9 @@ export default function RegistrationForm() {
 		mutationFn: register,
 		onSuccess: (data) => {
 			setUserData(data)
-            navigate(-2);
-			alert('registered and loged in successfully');
+            navigate(-1);
 		},
-		onError: () => alert('failed to register :c')
+		onError: () => alert('failed to register')
 	});
 
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {

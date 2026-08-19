@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../../utils/authenticationFunctions";
 import { useAuth } from "../../authContext";
 import { Box, Button, Card, CardContent, TextField, Typography } from "@mui/material";
+import RegistrationForm from "./RegistrationForm";
 
 export default function LoginForm() {
     const {setUserData} = useAuth();
@@ -16,9 +17,8 @@ export default function LoginForm() {
 		onSuccess: (data) => {
 			setUserData(data)
             navigate(-1);
-			alert('loged in successfully');
 		},
-		onError: () => alert('failed to log in :c ')
+		onError: () => alert('failed to log in')
 	});
 
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -40,10 +40,10 @@ export default function LoginForm() {
             </form>
 			</CardContent>
 		</Card>
-		<Typography variant="subtitle1">
+		<Typography variant="h6">
 			Don't have an account yet?
 		</Typography>
-		<Button component={RouterLink} to='/register' >Register</Button>
+		<RegistrationForm/>
 		</Box>
 	);
 };

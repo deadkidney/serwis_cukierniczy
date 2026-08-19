@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Ingredient, RecipeData } from "../../DataInterfaces";
-import { Button, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Button, IconButton, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function IngredientsInput({
@@ -21,7 +21,7 @@ export default function IngredientsInput({
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => {
 		setIngredient(prev => ({
 			...prev,
-			[e.target.id]: e.target.value
+			[e.target.name]: e.target.value
 		}))
 	}
 
@@ -46,6 +46,8 @@ export default function IngredientsInput({
 			ingredients: prev.ingredients.filter((ingredient) => ingredient.id != id)
 		}))
 	};
+
+	const units = ['ml', 'l', 'g', 'cups', 'tablespoons', 'teaspoons', 'piece']
 	
 	return (
 		<div>
@@ -58,10 +60,14 @@ export default function IngredientsInput({
 					alignItems: "center",
 				}}
 			>
-				<TextField value={ingredient.amount} id="amount" label="amount" onChange={onChangeHandler}/>
-				<TextField type="text" value={ingredient.unit} id="unit" label="unit" onChange={onChangeHandler}/>
-				<TextField type="text" value={ingredient.name} id="name" label="name" onChange={onChangeHandler}/>
-				<Button type="button" onClick={handleAddIngredient}>
+				<TextField value={ingredient.amount} name="amount" label="amount" onChange={onChangeHandler} fullWidth/>
+				<TextField select value={ingredient.unit} name="unit" label="unit" onChange={onChangeHandler} fullWidth>
+						{units.map((unit) => 
+						<MenuItem key={unit} value={unit}>{unit}</MenuItem>
+					)}
+				</TextField>
+				<TextField value={ingredient.name} name="name" label="name" onChange={onChangeHandler} fullWidth/>
+				<Button type="button" onClick={handleAddIngredient} fullWidth>
 					Add ingredient
 				</Button>
 			</Stack>
@@ -76,7 +82,7 @@ export default function IngredientsInput({
 							</IconButton>
 						</Stack>
 					)}
-				<Typography variant='body1'>Don't forget to add all ingredients before submitting!</Typography>
+				<Alert severity="warning">Don't forget to add all ingredients before submitting!</Alert>
 			</div>
 		</div>
 	);
