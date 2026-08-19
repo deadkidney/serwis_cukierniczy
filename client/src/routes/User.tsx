@@ -4,7 +4,8 @@ import { getUserById } from "../utils/userQueries";
 import { useState } from "react";
 import { getLikedRecipes, getRecipesByAuthor } from "../utils/recipeQueries";
 import RecipeTable from "../components/RecipeTable";
-import { Container, Pagination, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import LoadingScreen from "../components/LoadingScreen";
+import { Alert, Container, Pagination, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 export default function User() {
 	const {id} = useParams();
@@ -34,11 +35,11 @@ export default function User() {
 		retry: 1
 	});
 
-	if (user.isLoading || authored.isLoading || favourites.isLoading) 
-        return (<p>Loading...</p>);
+	if (user.isPending || authored.isPending || favourites.isPending) 
+        return (<LoadingScreen/>);
 
     if (user.isError || authored.isError || favourites.isError) 
-        return (<p>Couldn't find the user</p>);
+        return (<Alert severity="error">Couldn't find the user</Alert>);
 
 	return (
 		<Container>

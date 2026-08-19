@@ -2,7 +2,8 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { Link as RouterLink } from "react-router-dom";
 import { deleteUser, getAllUsers, changeRole } from '../../utils/userQueries';
 import type { UserData } from '../../DataInterfaces';
-import { Button, IconButton, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import LoadingScreen from '../LoadingScreen';
+import { Alert, Button, IconButton, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from 'react';
 
@@ -14,7 +15,7 @@ export default function UsersAdmin({
 	const [page, setPage] = useState(1);
 	const limit = 5;
 
-	const {data, isLoading, isError, refetch} = useQuery({
+	const {data, isPending, isError, refetch} = useQuery({
 		queryKey: ['users', page],
 		queryFn: () => getAllUsers(page - 1, limit, user.token),
 		retry: 1
@@ -24,7 +25,6 @@ export default function UsersAdmin({
 		mutationFn: deleteUser,
 		onSuccess: () => {
 			refetch();
-			alert('deleted successfully');
 		},
 		onError: () => alert('failed to delete')
 	});
@@ -33,16 +33,15 @@ export default function UsersAdmin({
 		mutationFn: changeRole,
 		onSuccess: () => {
 			refetch();
-			alert('changed role successfully')
 		},
 		onError: () => alert('failed to change role')
 	});
 
-	if (isLoading)
-		return (<p>Loading...</p>);
+	if (isPending)
+		return (<LoadingScreen/>);
 
 	if (isError)
-		return (<p>Couldn't find the users</p>);
+		return (<Alert severity='error'>Couldn't find the users</Alert>);
 
 	return(
 	<TableContainer component={Paper}>

@@ -5,7 +5,8 @@ import { getRecipeById, updateRecipe } from "../../utils/recipeQueries";
 import { useAuth } from "../../authContext";
 import type { RecipeData } from "../../DataInterfaces";
 import RecipeForm from "../../components/inputs/RecipeForm";
-import { Button, Card, Typography } from "@mui/material";
+import LoadingScreen from "../../components/LoadingScreen";
+import { Alert, Button, Card, Typography } from "@mui/material";
 
 export default function EditRecipeForm () {
 	const {id} = useParams();
@@ -15,7 +16,7 @@ export default function EditRecipeForm () {
 
 	let navigate = useNavigate();
 
-	const {data, isLoading, isError} = useQuery({
+	const {data, isPending, isError} = useQuery({
 		queryKey: ['recipe', {id: id}],
         queryFn: () => getRecipeById(id),
 		retry: 1
@@ -32,22 +33,21 @@ export default function EditRecipeForm () {
 			accepted: false
 	});
 	
-	if (isLoading)
-        return (<p>Loading...</p>);
+	if (isPending)
+        return (<LoadingScreen/>);
 
 	if (isError)
-        return (<p>Couldn't find the recipe</p>);
+        return (<Alert severity="error">Couldn't find the recipe</Alert>);
 
 	if (!user || user.id != data.user_id)
-		return (<p>You can't edit this recipe</p>);
+		return (<Alert severity="info">You can't edit this recipe</Alert>);
 	
 	const updateRecipeMutation = useMutation({
 		mutationFn: updateRecipe,
 		onSuccess: () => {
 			navigate(`/recipe/${id}`);
-			alert('recipe updated successfully');
 		},
-		onError: () => alert('failed to update recipe :c ')
+		onError: () => alert('failed to update recipe')
 	});
 
 	const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -60,12 +60,15 @@ export default function EditRecipeForm () {
 			<Typography variant="h3">
 				Edit recipe
 			</Typography>
-			<Typography variant="subtitle1">
+			<Alert severity="info">
 				After you edit the recipe you'll have to wait for admin to accept it again.
-			</Typography>
+			</Alert>
 			<RecipeForm recipe={recipe} setRecipe={setRecipe} handleSubmit={handleSubmit}/>
 			<Button type="submit" form="recipeForm" disabled={updateRecipeMutation.isPending}>
 				{updateRecipeMutation.isPending ? "Updating Recipe..." : "Update Recipe"}
+			</Button>
+			<Button type="button" onClick={() => navigate(`/recipe/${id}`)}>
+				Cancel
 			</Button>
 		</Card>
 	);

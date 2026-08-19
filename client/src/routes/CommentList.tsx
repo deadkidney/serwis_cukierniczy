@@ -4,7 +4,8 @@ import { getCommentsByRecipe, deleteComment } from "../utils/otherQueries";
 import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../authContext";
 import NewComment from "../components/NewComment";
-import { Button, Container, IconButton, Stack, Typography } from "@mui/material";
+import LoadingScreen from "../components/LoadingScreen";
+import { Alert, Button, Container, IconButton, Stack, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function CommentList() {
@@ -13,7 +14,7 @@ export default function CommentList() {
 
     const {user} = useAuth();
 
-    const {data, isLoading, isError, refetch} = useQuery({
+    const {data, isPending, isError, refetch} = useQuery({
 		queryKey: ['comments', {recipe: id}],
 		queryFn: () => getCommentsByRecipe(id),
 		retry: 1
@@ -23,23 +24,22 @@ export default function CommentList() {
 		mutationFn: deleteComment,
 		onSuccess: () => {
 			refetch();
-			alert('deleted successfully');
 		},
 		onError: () => alert('failed to delete')
 	});
   
-    if (isLoading)
-        return (<p>Loading...</p>);
+    if (isPending)
+        return (<LoadingScreen/>);
 
     if (isError)
-        return (<p>Couldn't find the comments</p>);
+        return (<Alert severity="error">Couldn't find the comments</Alert>);
 
     return (
         <Container>
             <Button component={RouterLink} to={`/recipe/${id}`}>Back to recipe</Button>
             <NewComment recipe_id={id} refetch={refetch} />
-            { data.length == 0 && <p>Nothing here...</p>}
-            {data.map((comment) => {
+            { data.length == 0 && <Alert severity="info">No comments yet...</Alert>}
+            {data.map((comment: {id: string, user_id: string, username: string, content: string}) => {
                 return(
                     <Stack key={comment.id} direction='row'>
                         <Button component={RouterLink} to={`/user/${comment.user_id}`}>{comment.username}</Button>

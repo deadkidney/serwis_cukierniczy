@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import type { RecipeData, TagData } from "../../DataInterfaces";
 import { getTags } from "../../utils/otherQueries";
-import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+import LoadingScreen from "../LoadingScreen";
+import { Alert, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 export default function TagsInput({
     tags,
@@ -18,11 +19,11 @@ export default function TagsInput({
 		staleTime: 60000
 	})
 
-	if (possibletags.isLoading)
-        return (<p>Loading...</p>);
+	if (possibletags.isPending)
+        return (<LoadingScreen/>);
 
 	if (possibletags.isError)
-        return (<p>Something went wrong</p>);
+        return (<Alert severity="error">Something went wrong</Alert>);
 
 	return (
 		<ToggleButtonGroup

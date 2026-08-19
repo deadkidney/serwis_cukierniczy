@@ -1,7 +1,7 @@
 import { Link as RouterLink } from "react-router-dom";
 import type { RecipeShort } from '../DataInterfaces';
 import Tags from "./Tags";
-import { Box, Button, Card, CardActions, CardContent, Grid, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardActions, CardContent, Grid, Typography } from '@mui/material';
 
 export default function RecipeTable({
 	recipes
@@ -10,7 +10,7 @@ export default function RecipeTable({
 }) {
 
 	if (recipes.length == 0)
-		return (<p>Nothing here...</p>);
+		return (<Alert severity="info">No recipes here...</Alert>);
 
 	return(
 		<Box sx={{ flexGrow: 1, p: 1 }}>

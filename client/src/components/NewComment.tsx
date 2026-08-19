@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "../authContext";
 import { addComment } from "../utils/otherQueries";
@@ -15,7 +15,7 @@ export default function NewComment({
 	const {user} = useAuth();
 
 	if (!user)
-		return <Link to='/login'>Log in to comment</Link>
+		return <Button component={RouterLink} to='/login'>Log in to comment</Button>
 
 	const [content, setContent] = useState("");
 
@@ -24,9 +24,8 @@ export default function NewComment({
 		onSuccess: () => {
             setContent('');
             refetch();
-			alert('comment added successfully');
 		},
-		onError: () => alert('failed to add comment :c ')
+		onError: () => alert('failed to add comment')
 	});
 
 	const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {

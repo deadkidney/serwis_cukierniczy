@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../authContext";
 import { useMutation } from "@tanstack/react-query";
 import { addRecipe } from "../../utils/recipeQueries";
 import type { RecipeData } from "../../DataInterfaces";
 import RecipeForm from "../../components/inputs/RecipeForm";
-import { Button, Card, Typography } from "@mui/material";
+import { Alert, Button, Card, Typography } from "@mui/material";
 
 export default function AddRecipeForm() {
 	let navigate = useNavigate();
 	const {user} = useAuth();
 
 	if (!user)
-		return <Link to='/login'>Log in to add recipe</Link>
+		return <Alert severity="info"> You need to <Button component={RouterLink} to='/login'>Log in</Button> to add a recipe</Alert>
 	
 	const [recipe, setRecipe] = useState<RecipeData>({
 		id: "",
@@ -29,9 +29,8 @@ export default function AddRecipeForm() {
 		mutationFn: addRecipe,
 		onSuccess: ({id}) => {
 			navigate(`/recipe/${id}`);
-			alert('recipe added successfully');
 		},
-		onError: () => alert('failed to add recipe :c ')
+		onError: () => alert('failed to add recipe')
 	});
 
 	const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -46,12 +45,15 @@ export default function AddRecipeForm() {
 			<Typography variant="h3">
 				Create new recipe
 			</Typography>
-			<Typography variant="subtitle1">
+			<Alert severity="info">
 				After you add the recipe you'll have to wait for admin to accept it.
-			</Typography>
+			</Alert>
 			<RecipeForm recipe={recipe} setRecipe={setRecipe} handleSubmit={handleSubmit}/>
 			<Button type="submit" form="recipeForm" disabled={addRecipeMutation.isPending}>
 				{addRecipeMutation.isPending ? "Adding Recipe..." : "Add Recipe"}
+			</Button>
+			<Button type="button" onClick={() => navigate(-1)}>
+				Cancel
 			</Button>
 		</Card>
 	);

@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { getRecipes } from '../utils/recipeQueries';
 import { getTags } from '../utils/otherQueries';
 import RecipeTable from '../components/RecipeTable';
-import { Box, Button, Container, Pagination, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import type { TagData } from '../DataInterfaces';
+import LoadingScreen from '../components/LoadingScreen';
+import { Alert, Button, Container, Pagination, Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
-import type { TagData } from '../DataInterfaces';
 
 export default function Home() {
 	const [searchVal, setSearchVal] = useState('');
@@ -14,7 +15,7 @@ export default function Home() {
 	const [page, setPage] = useState(1);
 	const limit = 12;
     
-	const {data, isLoading, isError, isSuccess, refetch} = useQuery({
+	const {data, isPending, isError, refetch} = useQuery({
         queryKey: ['recipes', page],
         queryFn: () => getRecipes(searchVal, tags, page - 1, limit),
 		placeholderData: keepPreviousData,
@@ -28,30 +29,24 @@ export default function Home() {
 		staleTime: 60000
 	})
 
-	if (possibletags.isLoading)
-        return (<p>Loading...</p>);
+	if (isPending || possibletags.isPending)
+        return (<LoadingScreen/>);
 
-	if (possibletags.isError)
-        return (<p>Something went wrong</p>);
+	if (isError || possibletags.isError)
+        return (<Alert severity='error'>Something went wrong</Alert>);
 
 	return (
        	<div>
-			<Container sx={{p: 2}}>
-				<Box>
-					<Button onClick={() => {setSearchVal(''); setTags([]), setPage(1)}}>
-						<ClearIcon />
-					</Button>
-					<TextField 
-						value={searchVal}
-						label="Search field"
-						type="search"
-						onChange={(e) => setSearchVal(e.target.value)} 
-						size="small"
-					/>
-					<Button onClick={() => {setPage(1); refetch()}} >
-						<SearchIcon />
-					</Button>
-				</Box>
+			<Stack direction={{sm: 'column', md: 'row'}} spacing={2} sx={{p: 2}}>
+				<Button onClick={() => {setSearchVal(''); setTags([]), setPage(1)}}>
+					<ClearIcon />
+				</Button>
+				<TextField 
+					value={searchVal}
+					label="Search field"
+					type="search"
+					onChange={(e) => setSearchVal(e.target.value)} 
+				/>
 				<ToggleButtonGroup
 					value={tags}
 					onChange={(e, newtags) => setTags(newtags)}
@@ -65,17 +60,17 @@ export default function Home() {
 						</ToggleButton>
 					)}
 				</ToggleButtonGroup>
-			</Container>
+				<Button onClick={() => {setPage(1); refetch()}} >
+					<SearchIcon />
+				</Button>
+			</Stack>
 			<Container sx={{p:2}}>
-			{isLoading && <p> Loading... </p>}
-			{isError && <p> Couldn't find the recipes </p>}
-			{isSuccess && <RecipeTable recipes={data.rows}/>}
-			{isSuccess && 
-			<Pagination 
-				count={Math.ceil(data.count/limit)} 
-				page={page} 
-				onChange={(e: React.ChangeEvent<unknown>, value: number) => setPage(value)}
-			/>}
+				<RecipeTable recipes={data.rows}/>
+				<Pagination 
+					count={Math.ceil(data.count/limit)} 
+					page={page} 
+					onChange={(e: React.ChangeEvent<unknown>, value: number) => setPage(value)}
+				/>
 			</Container>
         </div>
     )

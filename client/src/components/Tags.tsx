@@ -7,7 +7,7 @@ export default function Tags({
 }) {
 
 	if (tags.length == 0)
-		return (<p>This recipe has no tags</p>);
+		return (<Chip label='This recipe has no tags'/>);
 
 	return(
 		<Stack
@@ -19,7 +19,7 @@ export default function Tags({
 	        }}
         >
 			{tags.map((tag) => {
-				return <Chip key={tag} label={tag} size="small"/>
+				return <Chip key={tag} label={tag} />
 			})}
 		</Stack>
 		

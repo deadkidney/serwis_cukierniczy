@@ -1,6 +1,6 @@
 import { useAuth } from "../authContext";
 import { useState } from "react";
-import { Container, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Alert, Container, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import UsersAdmin from "../components/admin/UsersAdmin";
 import RecipesAdmin from "../components/admin/RecipesAdmin";
 
@@ -9,7 +9,7 @@ export default function Admin() {
     const {user} = useAuth();
     
     if(!user || user.role != 'ADMIN')
-        return (<p>You can't access this page</p>); 
+        return (<Alert severity="info">You can't access this page</Alert>); 
 
 	const [kind, setKind] = useState<'recipes' | 'users'>('recipes');
 
@@ -25,7 +25,7 @@ export default function Admin() {
 				color="primary"
 			>
 				<ToggleButton value="recipes" aria-label='recipes' >
-					Recipes
+					Recipes to accept
 				</ToggleButton>
 				<ToggleButton value="users" aria-label='users'>
 					Users

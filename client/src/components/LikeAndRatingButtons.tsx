@@ -1,14 +1,16 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { addLike, addRating, deleteLike, deleteRating, getIsLiked, getRating } from "../utils/otherQueries";
 import type { UserData } from "../DataInterfaces";
-import { Button, IconButton, Rating } from "@mui/material";
+import LoadingScreen from "./LoadingScreen";
+import { Alert, Button, IconButton, Rating } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
+
 export default function LikeAndRatingButtons({
-	user, recipe_id
+	user, recipe_id, ratingAvgRefetch
 } : {
-	user : UserData, recipe_id : string
+	user : UserData, recipe_id : string, ratingAvgRefetch: any
 }) {
 
 	const isLiked = useQuery({
@@ -28,7 +30,7 @@ export default function LikeAndRatingButtons({
 		onSuccess: () => {
 			isLiked.refetch();
 		},
-		onError: () => alert('failed to like recipe :c ')
+		onError: () => alert('failed to like recipe')
 	});
 
 	const deleteLikeMutation = useMutation({
@@ -36,30 +38,32 @@ export default function LikeAndRatingButtons({
 		onSuccess: () => {
 			isLiked.refetch();
 		},
-		onError: () => alert('failed to unlike recipe :c ')
+		onError: () => alert('failed to unlike recipe')
 	});
 	
 	const addRatingMutation = useMutation({
 		mutationFn: addRating,
 		onSuccess: () => {
 			myRating.refetch();
+			ratingAvgRefetch();
 		},
-		onError: () => alert('failed to rate recipe :c ')
+		onError: () => alert('failed to rate recipe')
 	});
 
 	const deleteRatingMutation = useMutation({
 		mutationFn: deleteRating,
 		onSuccess: () => {
             myRating.refetch();
+			ratingAvgRefetch();
 		},
-		onError: () => alert('failed to delete rating :c ')
+		onError: () => alert('failed to delete rating')
 	});
 
-    if (isLiked.isLoading || myRating.isLoading)
-        return (<p>Loading...</p>);
+    if (isLiked.isPending || myRating.isPending)
+        return (<LoadingScreen/>);
 
     if (isLiked.isError || myRating.isError)
-        return (<p>Something went wrong </p>);
+        return (<Alert severity='error'>Something went wrong </Alert>);
 
 		return (
 			<div>
@@ -72,8 +76,7 @@ export default function LikeAndRatingButtons({
 					</IconButton>
 				}
 				<Rating name="rate recipe" 
-					value={myRating.data} 
-					max={10} 
+					value={myRating.data}
 					onChange={(e, newvalue) => {
 						if(newvalue != null) {
 							deleteRatingMutation.mutate({data: {recipe_id, user_id: user.id}, token: user.token})

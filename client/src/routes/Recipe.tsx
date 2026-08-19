@@ -6,17 +6,18 @@ import { useAuth } from "../authContext";
 import LikeAndRatingButtons from "../components/LikeAndRatingButtons";
 import Tags from "../components/Tags";
 import Ingredients from "../components/Ingredients";
-import { Button, Container, Rating, Stack, Typography } from "@mui/material";
+import LoadingScreen from "../components/LoadingScreen";
+import { Alert, Button, Container, Divider, Rating, Stack, Typography } from "@mui/material";
 
 export default function Recipe() {
 	const {id} = useParams();
 	if (!id) throw Error("no recipe id");
 
 	const {user} = useAuth();
-	
+
 	let navigate = useNavigate();
 
-	const {data, isLoading, isError, refetch} = useQuery({
+	const {data, isPending, isError, refetch} = useQuery({
 		queryKey: ['recipe', {id: id}],
         queryFn: () => getRecipeById(id),
 		retry: 1
@@ -32,7 +33,6 @@ export default function Recipe() {
 		mutationFn: deleteRecipe,
 		onSuccess: () => {
 			navigate(-1);
-			alert('deleted successfully');
 		},
 		onError: () => alert('failed to delete')
 	});
@@ -41,38 +41,46 @@ export default function Recipe() {
 		mutationFn: updateRecipe,
 		onSuccess: () => {
 			refetch();
-			alert('recipe updated successfully');
 		},
-		onError: () => alert('failed to update recipe :c ')
+		onError: () => alert('failed to update recipe')
 	});
 
-    if (isLoading || ratingavg.isLoading)
-        return (<p>Loading...</p>);
+    if (isPending || ratingavg.isPending)
+        return (<LoadingScreen/>);
 
     if (isError)
-        return (<p>Couldn't find the recipe</p>);
+        return (<Alert severity="error">Couldn't find the recipe</Alert>);
 
 	if(data.accepted || (user && (user.role == 'ADMIN' || user.id == data.user_id)))
 		return (
 			<Container maxWidth="md">
-				{user && user.id != data.user_id && <LikeAndRatingButtons recipe_id={id} user={user}/>}
-				<h3>{data.title}</h3>
+				{data.accepted && user && user.id != data.user_id && <LikeAndRatingButtons recipe_id={id} user={user} ratingAvgRefetch={ratingavg.refetch}/>}
+				<Typography variant="h4">{data.title}</Typography>
+				{!data.accepted && <Typography variant='button' color="secondary">not accepted</Typography>}
 				<Stack direction='row' spacing={{sm: 1, md: 2}}>
 					<Button component={RouterLink} to={`/user/${data.user_id}`}>{data.username}</Button>
 					<Typography variant='button'>Portions: {data.portions}</Typography>
-					<Rating name="read-only" value={ratingavg.data ? ratingavg.data : 0} readOnly max={10} precision={0.1} />
+					<Rating name="read-only" value={ratingavg.data ? ratingavg.data : 0} readOnly precision={0.1} />
 				</Stack>
 				<Tags tags={data.tags}/>
-				<Ingredients ingredients={data.ingredients}/>
-				<p style={{whiteSpace: 'pre-wrap'}}>{data.content}</p>
-				{ user && user.id == data.user_id &&
-					<Button component={RouterLink} to={`/edit/recipe/${id}`}>edit</Button>}
-				{ user && (user.id == data.user_id || user.role == 'ADMIN') &&
-					<Button onClick={() => deleteRecipeMutation.mutate({id: id, token: user.token})}>delete</Button>}
-				{ !data.accepted && user && user.role == 'ADMIN' &&
-					<Button onClick={() => acceptRecipeMutation.mutate({recipe: {...data, accepted: true}, token: user.token})}>accept recipe</Button>}
-				<Button component={RouterLink} to={`/comments/recipe/${id}`}>Comments</Button>
+				<Stack
+					direction={{sm: 'column', md: 'row'}}
+					spacing={{sm: 2, md: 6}}
+					divider={<Divider orientation="vertical" flexItem />}
+				>
+					<Ingredients ingredients={data.ingredients} portions={data.portions}/>
+					<Typography style={{whiteSpace: 'pre-wrap'}}>{data.content}</Typography>
+				</Stack>
+				<Stack direction='row'>
+					{user && user.id == data.user_id &&
+						<Button component={RouterLink} to={`/edit/recipe/${id}`}>edit</Button>}
+					{user && (user.id == data.user_id || user.role == 'ADMIN') &&
+						<Button onClick={() => deleteRecipeMutation.mutate({id: id, token: user.token})}>delete</Button>}
+					{!data.accepted && user && user.role == 'ADMIN' &&
+						<Button onClick={() => acceptRecipeMutation.mutate({recipe: {...data, accepted: true}, token: user.token})}>accept recipe</Button>}
+					<Button component={RouterLink} to={`/comments/recipe/${id}`}>Comments</Button>
+				</Stack>
 			</Container>
 		);
-	else return (<p>You can't view this recipe</p>);
+	else return (<Alert severity="info">You can't view this recipe</Alert>);
 };
