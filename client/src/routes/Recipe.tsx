@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { getRecipeById, deleteRecipe, updateRecipe } from "../utils/recipeQueries";
 import { getRatingAverage } from "../utils/otherQueries";
 import { useAuth } from "../authContext";
+import { useMixRecipes } from "../mixRecipesContext";
 import LikeAndRatingButtons from "../components/LikeAndRatingButtons";
 import Tags from "../components/Tags";
 import Ingredients from "../components/Ingredients";
@@ -14,8 +15,9 @@ export default function Recipe() {
 	if (!id) throw Error("no recipe id");
 
 	const {user} = useAuth();
+	const {recipesToMix, addRecipeToMix} = useMixRecipes();
 
-	let navigate = useNavigate();
+	const navigate = useNavigate();
 
 	const {data, isPending, isError, refetch} = useQuery({
 		queryKey: ['recipe', {id: id}],
@@ -61,6 +63,9 @@ export default function Recipe() {
 						padding: 2
 					}}
 			>
+				{data.accepted && user && !recipesToMix.includes(id) &&
+					<Button onClick={() => addRecipeToMix(id)}> Add to Mix recipes</Button>
+				}
 				{data.accepted && user && user.id != data.user_id && <LikeAndRatingButtons recipe_id={id} user={user} ratingAvgRefetch={ratingavg.refetch}/>}
 				<Typography variant="h4">{data.title}</Typography>
 				{!data.accepted && <Typography variant='button' color="secondary">not accepted</Typography>}

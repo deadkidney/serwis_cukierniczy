@@ -8,6 +8,7 @@ import User from './routes/User';
 import CommentList from './routes/CommentList';
 import LoginForm from './routes/formscreens/LoginForm';
 import Admin from './routes/Admin';
+import RecipesMix from './routes/RecipesMix';
 
 export default function App() {
 	return (
@@ -21,7 +22,8 @@ export default function App() {
 				<Route path="/newrecipe" element={<AddRecipeForm />} />
 				<Route path="/login" element={<LoginForm/>}/>
 				<Route path="/user/:id" element={<User />} />
-				<Route path="admin" element={<Admin />} />
+				<Route path="/admin" element={<Admin />} />
+				<Route path="/recipesmix" element={<RecipesMix />} />
 				<Route path="*" element={<Navigate to="/" />}/>
 			</Routes>
 		</div>

@@ -41,12 +41,22 @@ export default function Header() {
 					<IconButton component={RouterLink} to='/newrecipe' aria-label="add recipe" color="secondary" >
 						<AddCircleIcon/>
 					</IconButton>
-					{user && user.role == 'ADMIN' && 
-						<Button component={RouterLink} to='/admin' color="inherit">Admin</Button>
-					}
 					<Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
 						Recipes
 					</Typography>
+					{user && user.role == 'ADMIN' && 
+						<Button component={RouterLink} to='/admin' color="inherit">Admin</Button>
+					}
+					{user &&
+						<Button
+							component={RouterLink}
+							to={"/recipesmix"}
+							aria-label="account of current user"
+							color="inherit"
+						>
+							Recipes mix
+						</Button>
+					}
 					{user?
 						<Button onClick={logout} color="inherit">Log out</Button> :
 						<Button component={RouterLink} to='/login' color="inherit">Log in</Button>
@@ -55,7 +65,6 @@ export default function Header() {
 						<IconButton
 							component={RouterLink}
 							to={`/user/${user.id}`}
-							size="large"
 							aria-label="account of current user"
 							color="inherit"
 						>
