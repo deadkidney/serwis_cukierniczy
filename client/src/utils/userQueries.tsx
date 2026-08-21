@@ -1,3 +1,11 @@
+//userQueries.tsx
+//
+// communication with the database server
+// user data and management queries
+//
+//
+
+//get the list of all users. With pagination
 export const getAllUsers = async (page: number, limit: number, token: string) => {
     const response = await fetch(`http://localhost:8080/api/users?page=${page}&limit=${limit}`,
         {   headers: {
@@ -11,6 +19,7 @@ export const getAllUsers = async (page: number, limit: number, token: string) =>
     return response.json();
 }
 
+//get username of a user
 export const getUserById = async (id : string) => {
     const response = await fetch(`http://localhost:8080/api/userinfo?id=${id}`);
     if (!response.ok) {
@@ -19,6 +28,7 @@ export const getUserById = async (id : string) => {
     return response.json();
 }
 
+//change a user's role to admin. Admin only
 export const changeRole = async ({id, token} : {id: string, token: string}) => {
     const response = await fetch(`http://localhost:8080/api/userinfo?id=${id}`,
         {   method: 'PUT',
@@ -33,6 +43,7 @@ export const changeRole = async ({id, token} : {id: string, token: string}) => {
     return true;
 }
 
+//delete a user
 export const deleteUser = async ({id, token} : {id: string, token: string}) => {
     const response = await fetch(`http://localhost:8080/api/userinfo?id=${id}`,
         {   method: 'DELETE',

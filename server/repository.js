@@ -1,3 +1,9 @@
+//repository.js
+//
+// database queries
+//
+//
+
 import pg from 'pg';
 const {Pool} = pg;
 const pool = new Pool({
@@ -8,168 +14,10 @@ const pool = new Pool({
     port: 5432,
 })
 
-//RECIPE QUERIES
 
-const getFilteredRecipes = async (search, tagfilter, page, limit) => {
-    const query = `SELECT id, title, tags FROM recipes WHERE accepted AND title LIKE $1 ${tagfilter} ORDER BY id DESC LIMIT $2 OFFSET $3`;
-    try {
-        const result = await pool.query(
-            query,
-            [search, limit, page*limit]
-        );
-        return result.rows;
-    } catch (error) {
-        throw new Error("can't get filtered recipes");
-    }
-}
-
-const getFilteredRecipesAmount = async (search, tagfilter) => {
-    const query = `SELECT COUNT(id) FROM recipes WHERE accepted AND title LIKE $1 ${tagfilter}`;
-    try {
-        const result = await pool.query(
-            query,
-            [search]
-        );
-        return result.rows[0].count;
-    } catch (error) {
-        throw new Error("can't get filtered recipes amount");
-    }
-}
-
-const getRecipesByAuthor = async (author, page, limit) => {
-    try {
-        const result = await pool.query(
-            'SELECT id, title, tags FROM recipes WHERE accepted AND user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
-            [author, limit, page*limit]
-        );
-        return result.rows;
-    } catch (error) {
-        throw new Error("can't get authored recipes");
-    }
-}
-
-const getRecipesByAuthorAmount = async (author) => {
-    try {
-        const result = await pool.query(
-            'SELECT COUNT(id) FROM recipes WHERE accepted AND user_id = $1',
-            [author]
-        );
-        return result.rows[0].count;
-    } catch (error) {
-        throw new Error("can't get authored recipes amount");
-    }
-}
-
-const getLikedRecipes = async (user, page, limit) => {
-    try {
-        const result = await pool.query(
-            'SELECT recipes.id, recipes.title, recipes.tags FROM recipes JOIN likes ON recipes.id = likes.recipe_id WHERE accepted AND likes.user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
-            [user, limit, page*limit]
-        );
-        return result.rows;
-    } catch (error) {
-        throw new Error("can't get liked recipes");
-    }
-}
-
-const getLikedRecipesAmount = async (user) => {
-    try {
-        const result = await pool.query(
-            'SELECT COUNT(recipes.id) FROM recipes JOIN likes ON recipes.id = likes.recipe_id WHERE accepted AND likes.user_id = $1',
-            [user]
-        );
-        return result.rows[0].count;
-    } catch (error) {
-        throw new Error("can't get liked recipes amount");
-    }
-}
-
-const getNotAcceptedRecipes = async (page, limit) => {
-    try {
-        const result = await pool.query(
-            'SELECT id, title, tags FROM recipes WHERE NOT accepted ORDER BY id DESC LIMIT $1 OFFSET $2',
-            [limit, page*limit]
-        );
-        return result.rows;
-    } catch (error) {
-        throw new Error("can't get not accepted recipes");
-    }
-}
-
-const getNotAcceptedRecipesAmount = async (user) => {
-    try {
-        const result = await pool.query(
-            'SELECT COUNT(id) FROM recipes WHERE NOT accepted'
-        );
-        return result.rows[0].count;
-    } catch (error) {
-        throw new Error("can't get not accepted recipes amount");
-    }
-}
-
-const getRecipeById = async (id) => {
-    try {
-        const result = await pool.query(
-            'SELECT recipes.id, recipes.title, recipes.user_id, users.username, recipes.ingredients, recipes.content, recipes.portions, recipes.tags, recipes.accepted FROM recipes JOIN users ON recipes.user_id = users.id WHERE recipes.id = $1', 
-            [id]
-        );
-        if(result.rowCount == 0)
-            throw new Error("can't find recipe by id");
-        return result.rows[0];
-    } catch (error) {
-        throw new Error("can't get recipe by id");
-    }
-}
-
-const createRecipe = async (title, user_id, ingredients, content, portions, tags) => {
-    try {
-        const result = await pool.query(
-        'INSERT INTO recipes (title, user_id, ingredients, content, portions, tags, accepted) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-        [title, user_id, ingredients, content, portions, tags, false]
-        );
-        return result.rows[0].id;
-    } catch (error) {
-        throw new Error("can't create recipe");
-  }
-}
-
-const updateRecipe = async (id, title, ingredients, content, portions, tags, accepted) => {
-    try {
-        await pool.query(
-        'UPDATE recipes SET title = $1, ingredients =$2, content = $3, portions = $4, tags = $5, accepted = $6 WHERE id = $7',
-        [title, ingredients, content, portions, tags, accepted, id]
-        );
-        return true;
-    } catch (error) {
-        throw new Error("can't update recipe");
-  }
-}
-
-const deleteRecipe = async (id) => {
-    try {
-        await pool.query(
-            'DELETE FROM likes WHERE recipe_id = $1',
-            [id]
-        );
-        await pool.query(
-            'DELETE FROM ratings WHERE recipe_id = $1',
-            [id]
-        );
-        await pool.query(
-            'DELETE FROM comments WHERE recipe_id = $1',
-            [id]
-        );
-        await pool.query(
-            'DELETE FROM recipes WHERE id = $1',
-            [id]
-        );
-        return true;
-    } catch (error) {
-        throw new Error("can't delete recipe");
-    }
-}
-
-// USER QUERIES
+// ---------------- user queries ----------------
+ 
+//get the list of all users
 const getUsers = async (page, limit) => {
     try {
         const result = await pool.query(
@@ -182,6 +30,7 @@ const getUsers = async (page, limit) => {
     }
 }
 
+//get the number of all users
 const getUsersAmount = async () => {
     try {
         const result = await pool.query(
@@ -193,6 +42,7 @@ const getUsersAmount = async () => {
     }
 }
 
+//get data of a user
 const getUserById = async (id) => {
     try {
         const result = await pool.query(
@@ -207,6 +57,7 @@ const getUserById = async (id) => {
     }
 }
 
+//change the role of a user
 const changeRole = async (id) => {
     try {
         await pool.query(
@@ -219,13 +70,14 @@ const changeRole = async (id) => {
   }
 }
 
+//delete a user from the database
 const deleteUser = async (id) => {
-    try {
+    try {//first delete of the user's activity: favourite recipes, ratings, comments and recipes with all their data. Then delete the user.
         await pool.query(
             'DELETE FROM likes WHERE user_id = $1',
             [id]
         );
-                await pool.query(
+        await pool.query(
             'DELETE FROM ratings WHERE user_id = $1',
             [id]
         );
@@ -259,12 +111,193 @@ const deleteUser = async (id) => {
     }
 }
 
-//LIKE QUERIES
-const getIsLiked = async (recipe, user) => {
+
+// ---------------- recipe queries ----------------
+
+//get a list of filtered, accepted recipes from the database. Tags are assumed to be safe
+const getFilteredRecipes = async (search, tags, page, limit) => {
+    const searchfilter = '%'+search+'%';
+    const tagfilter = tags ? tags.map((tag) => `AND '${tag}' = ANY (tags)`).join(' ') : '';
+    const query = `SELECT id, title, tags FROM recipes WHERE accepted AND title LIKE $1 ${tagfilter} ORDER BY id DESC LIMIT $2 OFFSET $3`;
     try {
         const result = await pool.query(
-            'SELECT COUNT(id) FROM likes WHERE recipe_id = $1 AND user_id = $2',
-            [recipe, user]
+            query,
+            [searchfilter, limit, page*limit]
+        );
+        return result.rows;
+    } catch (error) {
+        throw new Error("can't get filtered recipes");
+    }
+}
+
+//get a number of all matching recipes. Tags are assumed to be safe
+const getFilteredRecipesAmount = async (search, tags) => {
+    const searchfilter = '%'+search+'%';
+    const tagfilter = tags ? tags.map((tag) => `AND '${tag}' = ANY (tags)`).join(' ') : '';
+    const query = `SELECT COUNT(id) FROM recipes WHERE accepted AND title LIKE $1 ${tagfilter}`;
+    try {
+        const result = await pool.query(
+            query,
+            [searchfilter]
+        );
+        return result.rows[0].count;
+    } catch (error) {
+        throw new Error("can't get filtered recipes amount");
+    }
+}
+
+//get a list of accepted recipes by a given author
+const getRecipesByAuthor = async (author, page, limit) => {
+    try {
+        const result = await pool.query(
+            'SELECT id, title, tags FROM recipes WHERE accepted AND user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
+            [author, limit, page*limit]
+        );
+        return result.rows;
+    } catch (error) {
+        throw new Error("can't get authored recipes");
+    }
+}
+
+//get a number of accepted recipes by a given author
+const getRecipesByAuthorAmount = async (author) => {
+    try {
+        const result = await pool.query(
+            'SELECT COUNT(id) FROM recipes WHERE accepted AND user_id = $1',
+            [author]
+        );
+        return result.rows[0].count;
+    } catch (error) {
+        throw new Error("can't get authored recipes amount");
+    }
+}
+
+//get a list of recipes in favourites of a given user
+const getLikedRecipes = async (user, page, limit) => {
+    try {
+        const result = await pool.query(
+            'SELECT recipes.id, recipes.title, recipes.tags FROM recipes JOIN likes ON recipes.id = likes.recipe_id WHERE accepted AND likes.user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
+            [user, limit, page*limit]
+        );
+        return result.rows;
+    } catch (error) {
+        throw new Error("can't get liked recipes");
+    }
+}
+
+//get a number of recipes in favourites of a given user
+const getLikedRecipesAmount = async (user) => {
+    try {
+        const result = await pool.query(
+            'SELECT COUNT(recipes.id) FROM recipes JOIN likes ON recipes.id = likes.recipe_id WHERE accepted AND likes.user_id = $1',
+            [user]
+        );
+        return result.rows[0].count;
+    } catch (error) {
+        throw new Error("can't get liked recipes amount");
+    }
+}
+
+//get a list of not accepted recipes
+const getNotAcceptedRecipes = async (page, limit) => {
+    try {
+        const result = await pool.query(
+            'SELECT id, title, tags FROM recipes WHERE NOT accepted ORDER BY id DESC LIMIT $1 OFFSET $2',
+            [limit, page*limit]
+        );
+        return result.rows;
+    } catch (error) {
+        throw new Error("can't get not accepted recipes");
+    }
+}
+
+//get a number of not accepted recipes
+const getNotAcceptedRecipesAmount = async (user) => {
+    try {
+        const result = await pool.query(
+            'SELECT COUNT(id) FROM recipes WHERE NOT accepted'
+        );
+        return result.rows[0].count;
+    } catch (error) {
+        throw new Error("can't get not accepted recipes amount");
+    }
+}
+
+//get data of a recipe
+const getRecipeById = async (id) => {
+    try {
+        const result = await pool.query(
+            'SELECT recipes.id, recipes.title, recipes.user_id, users.username, recipes.ingredients, recipes.content, recipes.portions, recipes.tags, recipes.accepted FROM recipes JOIN users ON recipes.user_id = users.id WHERE recipes.id = $1', 
+            [id]
+        );
+        if(result.rowCount == 0)
+            throw new Error("can't find recipe by id");
+        return result.rows[0];
+    } catch (error) {
+        throw new Error("can't get recipe by id");
+    }
+}
+
+//create a new recipe
+const createRecipe = async (title, user_id, ingredients, content, portions, tags) => {
+    try {
+        const result = await pool.query(
+        'INSERT INTO recipes (title, user_id, ingredients, content, portions, tags, accepted) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+        [title, user_id, ingredients, content, portions, tags, false]
+        );
+        return result.rows[0].id;
+    } catch (error) {
+        throw new Error("can't create recipe");
+  }
+}
+
+//update an existing recipe
+const updateRecipe = async (id, title, ingredients, content, portions, tags, accepted) => {
+    try {
+        await pool.query(
+        'UPDATE recipes SET title = $1, ingredients =$2, content = $3, portions = $4, tags = $5, accepted = $6 WHERE id = $7',
+        [title, ingredients, content, portions, tags, accepted, id]
+        );
+        return true;
+    } catch (error) {
+        throw new Error("can't update recipe");
+  }
+}
+
+//delete an existing recipe
+const deleteRecipe = async (id) => {
+    try {
+        await pool.query(
+            'DELETE FROM likes WHERE recipe_id = $1',
+            [id]
+        );
+        await pool.query(
+            'DELETE FROM ratings WHERE recipe_id = $1',
+            [id]
+        );
+        await pool.query(
+            'DELETE FROM comments WHERE recipe_id = $1',
+            [id]
+        );
+        await pool.query(
+            'DELETE FROM recipes WHERE id = $1',
+            [id]
+        );
+        return true;
+    } catch (error) {
+        throw new Error("can't delete recipe");
+    }
+}
+
+
+// ---------------- favourite recipe queries ----------------
+
+//check whether a user likes a recipe
+const getIsLiked = async (user_id, recipe_id) => {
+    try {
+        const result = await pool.query(
+            'SELECT COUNT(id) FROM likes WHERE user_id = $1 AND recipe_id = $2',
+            [user_id, recipe_id]
         );
         return result.rows[0].count;
     } catch (error) {
@@ -272,6 +305,7 @@ const getIsLiked = async (recipe, user) => {
     }
 }
 
+//add a recipe to user's favourites
 const addLike = async (user_id, recipe_id) => {
     try {
         await pool.query(
@@ -284,6 +318,7 @@ const addLike = async (user_id, recipe_id) => {
   }
 }
 
+//delete a recipe from user's favourites
 const deleteLike = async (user_id, recipe_id) => {
     try {
         await pool.query(
@@ -296,7 +331,10 @@ const deleteLike = async (user_id, recipe_id) => {
     }
 }
 
-//RATING QUERIES
+
+// ---------------- rating queries ----------------
+
+//get an average rating of a recipe
 const getRatingAverage = async (recipe_id) => {
     try {
         const result = await pool.query(
@@ -308,6 +346,8 @@ const getRatingAverage = async (recipe_id) => {
         throw new Error("can't get rating average");
     }
 }
+
+//get a user's rating of a recipe
 const getRating = async (user_id, recipe_id) => {
     try {
         const result = await pool.query(
@@ -322,6 +362,7 @@ const getRating = async (user_id, recipe_id) => {
     }
 }
 
+//add a user's rating to a recipe
 const addRating = async (user_id, recipe_id, value) => {
     try {
         await pool.query(
@@ -334,6 +375,7 @@ const addRating = async (user_id, recipe_id, value) => {
   }
 }
 
+//delete a user's rating from a recipe
 const deleteRating = async (user_id, recipe_id) => {
     try {
         await pool.query(
@@ -346,7 +388,10 @@ const deleteRating = async (user_id, recipe_id) => {
     }
 }
 
-//COMMENT QUERIES
+
+// ---------------- comment queries ----------------
+
+//get the list of all comments of a recipe
 const getCommentsByRecipe = async (recipe_id) => {
     try {
         const result = await pool.query(
@@ -359,32 +404,35 @@ const getCommentsByRecipe = async (recipe_id) => {
     }
 }
 
-const getCommentById = async (id) => {
+//get a comment's author
+const getCommentAuthor = async (id) => {
     try {
         const result = await pool.query(
-            'SELECT id, content, user_id FROM comments WHERE id = $1',
+            'SELECT user_id FROM comments WHERE id = $1',
             [id]
         );
         if(result.rowCount == 0)
             throw new Error("can't find comment by id");
-        return result.rows[0];
+        return result.rows[0].user_id;
     } catch (error) {
-        throw new Error("can't get comment");
+        throw new Error("can't get comment author");
     }
 }
 
-const addComment = async (recipe_id, user_id, content) => {
+//add a comment to a recipe
+const addComment = async (user_id, recipe_id, content) => {
     try {
-        await pool.query(
-        'INSERT INTO comments (recipe_id, user_id, content) VALUES ($1, $2, $3)',
+        const result = await pool.query(
+        'INSERT INTO comments (recipe_id, user_id, content) VALUES ($1, $2, $3) RETURNING id',
         [recipe_id, user_id, content]
         );
-        return true;
+        return result.rows[0].id;
     } catch (error) {
         throw new Error("can't add comment");
   }
 }
 
+//delete a comment
 const deleteComment = async (id) => {
     try {
         await pool.query(
@@ -397,7 +445,10 @@ const deleteComment = async (id) => {
     }
 }
 
-//TAGS QUERIES
+
+// ---------------- tag queries ----------------
+
+//get the list of all tags
 const getTags = async () => {
     try {
         const result = await pool.query(
@@ -410,6 +461,11 @@ const getTags = async () => {
 }
 
 export {
+    getUsers,
+    getUsersAmount,
+    getUserById,
+    changeRole,
+    deleteUser,
     getFilteredRecipes,
     getFilteredRecipesAmount,
     getRecipesByAuthor,
@@ -422,11 +478,6 @@ export {
     createRecipe,
     updateRecipe,
     deleteRecipe,
-    getUsers,
-    getUsersAmount,
-    getUserById,
-    changeRole,
-    deleteUser,
     getIsLiked,
     addLike,
     deleteLike,
@@ -435,7 +486,7 @@ export {
     addRating,
     deleteRating,
     getCommentsByRecipe,
-    getCommentById,
+    getCommentAuthor,
     addComment,
     deleteComment,
     getTags
