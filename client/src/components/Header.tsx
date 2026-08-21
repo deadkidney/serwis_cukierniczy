@@ -1,5 +1,5 @@
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../authContext";
+import { useAuth } from "../contexts/authContext";
 import { Box, AppBar, Button, Typography, Toolbar, IconButton } from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import HomeIcon from '@mui/icons-material/Home';

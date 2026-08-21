@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getCommentsByRecipe, deleteComment } from "../utils/otherQueries";
 import { Link as RouterLink } from "react-router-dom";
-import { useAuth } from "../authContext";
+import { useAuth } from "../contexts/authContext";
 import NewComment from "../components/inputs/NewComment";
 import LoadingScreen from "../components/LoadingScreen";
 import { Alert, Button, Container, Divider, IconButton, Stack, Typography } from "@mui/material";

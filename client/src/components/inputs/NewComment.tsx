@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { useAuth } from "../../authContext";
+import { useAuth } from "../../contexts/authContext";
 import { addComment } from "../../utils/otherQueries";
 import { Button, Stack, TextField } from "@mui/material";
 
@@ -15,7 +15,7 @@ export default function NewComment({
 	const {user} = useAuth();
 
 	if (!user)
-		return <Button component={RouterLink} to='/login'>Log in to comment</Button>
+		return (<Button component={RouterLink} to='/login'>Log in to comment</Button>)
 
 	const [content, setContent] = useState("");
 

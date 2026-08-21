@@ -1,12 +1,12 @@
 import { useQueries } from "@tanstack/react-query";
 import { getRecipeById } from "../utils/recipeQueries";
-import { useMixRecipes } from "../mixRecipesContext";
+import { useMixRecipes } from "../contexts/mixRecipesContext";
 import { Link as RouterLink} from "react-router-dom";
 import Ingredients from "../components/Ingredients";
 import LoadingScreen from "../components/LoadingScreen";
 import { Alert, Button, Divider, IconButton, Stack, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useAuth } from "../authContext";
+import { useAuth } from "../contexts/authContext";
 
 export default function RecipesMix() {
 	const {recipesToMix, deleteRecipeToMix, clearRecipesToMix} = useMixRecipes();

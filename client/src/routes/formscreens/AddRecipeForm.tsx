@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../../authContext";
+import { useAuth } from "../../contexts/authContext";
 import { useMutation } from "@tanstack/react-query";
 import { addRecipe } from "../../utils/recipeQueries";
 import type { RecipeData } from "../../DataInterfaces";
@@ -8,11 +8,13 @@ import RecipeForm from "../../components/inputs/RecipeForm";
 import { Alert, Button, Stack, Typography } from "@mui/material";
 
 export default function AddRecipeForm() {
-	let navigate = useNavigate();
+	const navigate = useNavigate();
 	const {user} = useAuth();
 
 	if (!user)
-		return <Alert severity="info" color="secondary"> You need to <Button component={RouterLink} to='/login'>Log in</Button> to add a recipe</Alert>
+		return (<Alert severity="info" color="secondary">
+			You need to <Button component={RouterLink} to='/login'>Log in</Button> to add a recipe.
+			</Alert>)
 	
 	const [recipe, setRecipe] = useState<RecipeData>({
 		id: "",

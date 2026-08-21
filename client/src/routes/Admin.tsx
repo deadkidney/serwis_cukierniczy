@@ -1,4 +1,4 @@
-import { useAuth } from "../authContext";
+import { useAuth } from "../contexts/authContext";
 import { useState } from "react";
 import { Alert, Container, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import UsersAdmin from "../components/admin/UsersAdmin";

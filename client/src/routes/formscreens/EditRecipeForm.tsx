@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getRecipeById, updateRecipe } from "../../utils/recipeQueries";
-import { useAuth } from "../../authContext";
+import { useAuth } from "../../contexts/authContext";
 import type { RecipeData } from "../../DataInterfaces";
 import RecipeForm from "../../components/inputs/RecipeForm";
 import LoadingScreen from "../../components/LoadingScreen";
@@ -14,7 +14,7 @@ export default function EditRecipeForm () {
 
 	const {user} = useAuth();
 
-	let navigate = useNavigate();
+	const navigate = useNavigate();
 
 	const {data, isPending, isError} = useQuery({
 		queryKey: ['recipe', {id: id}],

@@ -1,6 +1,6 @@
 import { Link as RouterLink } from "react-router-dom";
-import { useAuth } from "../authContext";
-import { useMixRecipes } from "../mixRecipesContext";
+import { useAuth } from "../contexts/authContext";
+import { useMixRecipes } from "../contexts/mixRecipesContext";
 import type { RecipeShort } from '../DataInterfaces';
 import Tags from "./Tags";
 import { Alert, Box, Button, Card, CardActionArea, CardActions, CardContent, Grid, Typography } from '@mui/material';

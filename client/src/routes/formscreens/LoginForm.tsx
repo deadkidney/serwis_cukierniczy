@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../../utils/authenticationFunctions";
-import { useAuth } from "../../authContext";
+import { useAuth } from "../../contexts/authContext";
 import { Button, Divider, Stack, TextField, Typography } from "@mui/material";
 import RegistrationForm from "./RegistrationForm";
 
