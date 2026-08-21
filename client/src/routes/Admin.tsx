@@ -34,8 +34,8 @@ export default function Admin() {
 				</ToggleButton>
 			</ToggleButtonGroup>
 			{kind == 'recipes' ? 
-            <RecipesAdmin/> : 
-            <UsersAdmin user={user}/>}
+            <RecipesAdmin user={user} /> : 
+            <UsersAdmin user={user} />}
 		</Container>
 	);
 };

@@ -1,17 +1,22 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useState } from 'react';
 import { getNotAcceptedRecipes } from '../../utils/recipeQueries';
+import type { UserData } from '../../DataInterfaces';
 import RecipeTable from '../RecipeTable';
 import LoadingScreen from '../LoadingScreen';
 import { Alert, Container, Pagination } from '@mui/material';
 
-export default function RecipesAdmin() {
+export default function RecipesAdmin({
+	user
+} : {
+	user: UserData
+}) {
 	const [page, setPage] = useState(1);
 	const limit = 12;
 	
 	const {data, isPending, isError} = useQuery({
 		queryKey: ['recipes to accept', page],
-		queryFn: () => getNotAcceptedRecipes(page - 1, limit),
+		queryFn: () => getNotAcceptedRecipes(page - 1, limit, user.token),
 		placeholderData: keepPreviousData,
 		retry: 1
 	});
