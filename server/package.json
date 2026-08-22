@@ -5,8 +5,13 @@
   "main": "server.js",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --silent=false",
-    "start": "node sever",
+    "start": "node server",
     "dev": "nodemon server"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "config.json": "./tests/mock.config.json"
+    }
   },
   "keywords": [],
   "author": "",

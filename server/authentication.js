@@ -7,18 +7,10 @@
 import pg from 'pg';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import config from './config.json' with { type: 'json' };
 
 const {Pool} = pg;
-const pool = new Pool({
-    user: 'server',
-    host: 'localhost',
-    database: 'serwiscukierniczy',
-    password: 'password',
-    port: 5432,
-})
-
-const JWT_SECRET = "placeholder secret";
-const salt = 10;
+const pool = new Pool(config.dbConfig);
 
 //register a user
 const register = async (username, password) => {
@@ -32,7 +24,7 @@ const register = async (username, password) => {
             throw new Error("username already taken");
 
         //save user's data
-        const passwordhash = await bcrypt.hash(password, salt);
+        const passwordhash = await bcrypt.hash(password, config.BCRYPT_SALT);
         const result = await pool.query(
             'INSERT INTO users (username, passwordhash, role) VALUES ($1, $2, $3) RETURNING id, username, role',
             [username, passwordhash, 'USER']
@@ -40,7 +32,7 @@ const register = async (username, password) => {
         //generate a json web token
         const token = jwt.sign(
             result.rows[0],
-            JWT_SECRET,
+            config.JWT_SECRET,
             { expiresIn: '1h'}
         );
         return {...result.rows[0], token};
@@ -66,7 +58,7 @@ const login = async (username, password) => {
             const user = {id: result.rows[0].id, username: result.rows[0].username, role: result.rows[0].role};
             const token = jwt.sign(
                 user,
-                JWT_SECRET,
+                config.JWT_SECRET,
                 { expiresIn: '1h'}
             );
             return {...user, token};
@@ -85,7 +77,7 @@ const processToken = (req, res, next) => {
         req.user = {role: 'VIEWER'}
         next();
     } else try {
-        req.user = jwt.verify(token, JWT_SECRET);
+        req.user = jwt.verify(token, config.JWT_SECRET);
         next();
     } catch (error) {
         throw new Error("invalid token");

@@ -5,14 +5,9 @@
 //
 
 import pg from 'pg';
+import config from './config.json' with { type: 'json' };
 const {Pool} = pg;
-const pool = new Pool({
-    user: 'server',
-    host: 'localhost',
-    database: 'serwiscukierniczy',
-    password: 'password',
-    port: 5432,
-})
+const pool = new Pool(config.dbConfig)
 
 
 // ---------------- user queries ----------------
