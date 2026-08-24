@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --silent=false",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles --silent=false --verbose",
     "start": "node server",
     "dev": "nodemon server"
   },

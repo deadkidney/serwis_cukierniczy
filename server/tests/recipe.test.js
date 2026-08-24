@@ -46,7 +46,7 @@ describe('queries for adding and removal of recipes', () => {
         await db.addLike(2, id);
         await db.addRating(1, id, 4);
 
-        await expect(db.deleteRecipe).resolves.toBeTruthy();
+        await expect(db.deleteRecipe(id)).resolves.toBeTruthy();
     });
 });
 

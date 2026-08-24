@@ -1,12 +1,11 @@
 {
     "dbConfig": {
-        "user": "server",
+        "user": "",
         "host": "localhost",
-        "database": "serwiscukierniczytests",
-        "password": "password",
+        "database": "",
+        "password": "",
         "port": 5432
     },
-    "JWT_SECRET": "placeholder secret",
+    "JWT_SECRET": "test secret",
     "BCRYPT_SALT" : 10
-
 }
