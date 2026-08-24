@@ -5,11 +5,13 @@ import { getTags } from '../utils/otherQueries';
 import RecipeTable from '../components/RecipeTable';
 import type { TagData } from '../DataInterfaces';
 import LoadingScreen from '../components/LoadingScreen';
-import { Alert, Button, Container, Pagination, Stack, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Alert, Button, Container, Pagination, Stack, TextField, ToggleButton, ToggleButtonGroup, useMediaQuery } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 
 export default function Home() {
+	const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+
 	const [searchVal, setSearchVal] = useState('');
 	const [tags, setTags] = useState<string[]>([]);
 	const [page, setPage] = useState(1);
@@ -38,7 +40,7 @@ export default function Home() {
 	return (
        	<Container sx={{padding: 2}}>
 			<Stack 
-				direction={{sm: 'column', md: 'row'}} 
+				direction={{sm: 'column', md: 'row'}}
 				spacing={2}
 				sx={{
 					justifyContent: "center",
@@ -58,6 +60,7 @@ export default function Home() {
 				/>
 				<ToggleButtonGroup
 					value={tags}
+					orientation={isMobile ? 'vertical' : 'horizontal'}
 					onChange={(e, newtags) => setTags(newtags)}
 					aria-label="tags"
 					color="secondary"

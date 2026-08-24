@@ -1,21 +1,14 @@
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
-import { Box, AppBar, Button, Typography, Toolbar, IconButton } from '@mui/material';
+import { Box, AppBar, Typography, Toolbar, IconButton, Button } from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import HomeIcon from '@mui/icons-material/Home';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import ColorSchemeToggle from "./ColorSchemeToggle";
+import UserMenu from "./UserMenu";
 
 export default function Header() {
-	const {user, deleteUserData} = useAuth();
+	const {user} = useAuth();
 	const navigate = useNavigate();
-
-	const logout = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-	  e.preventDefault();
-	  deleteUserData();
-	  navigate('/');
-   };
 
    return(
 		<Box sx={{ flexGrow: 1 }}>
@@ -38,40 +31,33 @@ export default function Header() {
 					>
 						<HomeIcon />
 					</IconButton>
-					<IconButton component={RouterLink} to='/newrecipe' aria-label="add recipe" color="secondary" >
+					<IconButton
+						component={RouterLink}
+						to='/newrecipe'
+						size="large"
+						aria-label="add recipe"
+						color="secondary"
+					>
 						<AddCircleIcon/>
 					</IconButton>
-					<Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
+					<Typography
+						variant="h5"
+						component="div"
+						sx={{ flexGrow: 1, padding: 2 }}>
 						Recipes
 					</Typography>
-					{user && user.role == 'ADMIN' && 
-						<Button component={RouterLink} to='/admin' color="inherit">Admin</Button>
-					}
-					{user &&
-						<Button
-							component={RouterLink}
-							to={"/recipesmix"}
-							aria-label="account of current user"
-							color="inherit"
+					
+					{user ?
+					<UserMenu /> :
+					<Button
+						component={RouterLink}
+						to='/login'
+						aria-label="login"
+						color="inherit"
 						>
-							Recipes mix
+							Log in
 						</Button>
 					}
-					{user?
-						<Button onClick={logout} color="inherit">Log out</Button> :
-						<Button component={RouterLink} to='/login' color="inherit">Log in</Button>
-					}
-					{user &&
-						<IconButton
-							component={RouterLink}
-							to={`/user/${user.id}`}
-							aria-label="account of current user"
-							color="inherit"
-						>
-							<AccountCircle />
-						</IconButton>
-					}
-					<ColorSchemeToggle/>
 				</Toolbar>
 			</AppBar>
 		</Box>

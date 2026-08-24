@@ -7,7 +7,7 @@ export default function Tags({
 }) {
 
 	if (tags.length == 0)
-		return (<Chip label='This recipe has no tags' color='secondary' size='small'/>);
+		return (<Chip label='This recipe has no tags' color='secondary' size='small' sx={{ margin: 2 }} />);
 
 	return(
 		<Stack

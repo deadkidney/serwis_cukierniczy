@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { RecipeData, TagData } from "../../DataInterfaces";
 import { getTags } from "../../utils/otherQueries";
 import LoadingScreen from "../LoadingScreen";
-import { Alert, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Alert, ToggleButton, ToggleButtonGroup, useMediaQuery } from '@mui/material';
 
 export default function TagsInput({
     tags,
@@ -11,6 +11,7 @@ export default function TagsInput({
     tags : string[],
     setRecipe : (value: React.SetStateAction<RecipeData>) => void
 }) {
+	const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
 	const possibletags = useQuery({
 		queryKey: ['tags'],
@@ -28,6 +29,7 @@ export default function TagsInput({
 	return (
 		<ToggleButtonGroup
 			value={tags}
+			orientation={isMobile ? 'vertical' : 'horizontal'}
 			onChange={(e, newtags) =>
 				setRecipe((prev) => ({
 					...prev,

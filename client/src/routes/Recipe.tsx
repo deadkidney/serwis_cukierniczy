@@ -56,7 +56,7 @@ export default function Recipe() {
 	if(data.accepted || (user && (user.role == 'ADMIN' || user.id == data.user_id)))
 		return (
 			<Stack 
-				spacing={0.5}
+				spacing={1}
 				sx={{
 						justifyContent: "center",
 						alignItems: "center",
@@ -70,7 +70,7 @@ export default function Recipe() {
 				<Typography variant="h4">{data.title}</Typography>
 				{!data.accepted && <Typography variant='button' color="secondary">not accepted</Typography>}
 				<Stack
-					direction='row'
+					direction={{sm: 'column', md: 'row'}} 
 					spacing={{sm: 2, md: 4}}
 					sx={{
 						justifyContent: "center",

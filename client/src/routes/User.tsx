@@ -49,7 +49,7 @@ export default function User() {
 			<ToggleButtonGroup
 				value={kind}
 				exclusive
-				onChange={(e, kind) => setKind(kind)}
+				onChange={(e, kind) => {if(kind != null) setKind(kind)}}
 				color="secondary"
 				fullWidth
 				sx={{padding: 2}}
