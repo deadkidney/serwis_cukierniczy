@@ -5,11 +5,11 @@
 //
 //
 
-import type { CommentData, LikeData, RatingData } from "../DataInterfaces";
+import type { CommentData, FavouriteData, RatingData } from "../DataInterfaces";
 
 //check whether the user has a recipe in their favourites
-export const getIsLiked = async ({user_id, recipe_id, token} : {user_id: string, recipe_id: string, token: string}) => {
-    const response = await fetch(`http://localhost:8080/api/likes?user=${user_id}&recipe=${recipe_id}`,
+export const getIsFavourite = async ({user_id, recipe_id, token} : {user_id: string, recipe_id: string, token: string}) => {
+    const response = await fetch(`http://localhost:8080/api/favourites?user=${user_id}&recipe=${recipe_id}`,
         {   
             headers: {
                 'Authorization': `${token}`
@@ -23,8 +23,8 @@ export const getIsLiked = async ({user_id, recipe_id, token} : {user_id: string,
 }
 
 //add a recipe to user's favourties
-export const addLike = async ({data, token} : {data: LikeData, token: string}) => {
-    const response = await fetch("http://localhost:8080/api/likes",
+export const addFavourite = async ({data, token} : {data: FavouriteData, token: string}) => {
+    const response = await fetch("http://localhost:8080/api/favourites",
         {   method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -34,14 +34,14 @@ export const addLike = async ({data, token} : {data: LikeData, token: string}) =
         }
     );
     if (!response.ok) {
-        throw new Error('failed to add like');
+        throw new Error('failed to add favourite');
     }
     return true;
 }
 
 //remove a recipe from user's favourites
-export const deleteLike = async ({data, token} : {data: LikeData, token: string}) => {
-    const response = await fetch('http://localhost:8080/api/likes',
+export const deleteFavourite = async ({data, token} : {data: FavouriteData, token: string}) => {
+    const response = await fetch('http://localhost:8080/api/favourites',
         {   method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ export const deleteLike = async ({data, token} : {data: LikeData, token: string}
         }
     );
     if (!response.ok) {
-        throw new Error('failed to delete like')
+        throw new Error('failed to delete favourite')
     }
     return true;
 }
@@ -97,7 +97,7 @@ export const addRating = async ({data, token} : {data: RatingData, token: string
 }
 
 //remove user's rating from a recipe
-export const deleteRating = async ({data, token} : {data: LikeData, token: string}) => {
+export const deleteRating = async ({data, token} : {data: FavouriteData, token: string}) => {
     const response = await fetch('http://localhost:8080/api/ratings',
         {   method: 'DELETE',
             headers: {

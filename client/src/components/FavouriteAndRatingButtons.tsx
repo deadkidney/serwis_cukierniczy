@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { addLike, addRating, deleteLike, deleteRating, getIsLiked, getRating } from "../utils/otherQueries";
+import { addFavourite, addRating, deleteFavourite, deleteRating, getIsFavourite, getRating } from "../utils/otherQueries";
 import type { UserData } from "../DataInterfaces";
 import LoadingScreen from "./LoadingScreen";
 import { Alert, Button, IconButton, Rating, Stack } from "@mui/material";
@@ -7,15 +7,15 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 
-export default function LikeAndRatingButtons({
+export default function FavouriteAndRatingButtons({
 	user, recipe_id, ratingAvgRefetch
 } : {
 	user : UserData, recipe_id : string, ratingAvgRefetch: any
 }) {
 
-	const isLiked = useQuery({
-		queryKey: ['liked', {recipe: recipe_id}],
-		queryFn: () => getIsLiked({user_id: user.id, recipe_id, token: user.token}),
+	const isFavourite = useQuery({
+		queryKey: ['favourite', {recipe: recipe_id}],
+		queryFn: () => getIsFavourite({user_id: user.id, recipe_id, token: user.token}),
 		retry: 1
 	})
 
@@ -25,20 +25,20 @@ export default function LikeAndRatingButtons({
 		retry: 1
 	})
 
-	const addLikeMutation = useMutation({
-		mutationFn: addLike,
+	const addFavouriteMutation = useMutation({
+		mutationFn: addFavourite,
 		onSuccess: () => {
-			isLiked.refetch();
+			isFavourite.refetch();
 		},
-		onError: () => alert('failed to like recipe')
+		onError: () => alert('failed to favourite recipe')
 	});
 
-	const deleteLikeMutation = useMutation({
-		mutationFn: deleteLike,
+	const deleteFavouriteMutation = useMutation({
+		mutationFn: deleteFavourite,
 		onSuccess: () => {
-			isLiked.refetch();
+			isFavourite.refetch();
 		},
-		onError: () => alert('failed to unlike recipe')
+		onError: () => alert('failed to unfavourite recipe')
 	});
 	
 	const addRatingMutation = useMutation({
@@ -59,10 +59,10 @@ export default function LikeAndRatingButtons({
 		onError: () => alert('failed to delete rating')
 	});
 
-    if (isLiked.isPending || myRating.isPending)
+    if (isFavourite.isPending || myRating.isPending)
         return (<LoadingScreen/>);
 
-    if (isLiked.isError || myRating.isError)
+    if (isFavourite.isError || myRating.isError)
         return (<Alert severity='error'>Something went wrong </Alert>);
 
 		return (
@@ -74,11 +74,11 @@ export default function LikeAndRatingButtons({
 						alignItems: "center",
 					}}
 				>
-				{ isLiked.data != 0 ? 
-					<IconButton onClick={() => deleteLikeMutation.mutate({data: {recipe_id, user_id: user.id}, token: user.token})} color="secondary">
+				{ isFavourite.data != 0 ? 
+					<IconButton onClick={() => deleteFavouriteMutation.mutate({data: {recipe_id, user_id: user.id}, token: user.token})} color="secondary">
 						<FavoriteIcon/>
 					</IconButton> :
-					<IconButton onClick={() => addLikeMutation.mutate({data: {recipe_id, user_id: user.id}, token: user.token})} color="secondary">
+					<IconButton onClick={() => addFavouriteMutation.mutate({data: {recipe_id, user_id: user.id}, token: user.token})} color="secondary">
 						<FavoriteBorderIcon/>
 					</IconButton>
 				}

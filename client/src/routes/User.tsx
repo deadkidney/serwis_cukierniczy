@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getUserById } from "../utils/userQueries";
 import { useState } from "react";
-import { getLikedRecipes, getRecipesByAuthor } from "../utils/recipeQueries";
+import { getFavouriteRecipes, getRecipesByAuthor } from "../utils/recipeQueries";
 import RecipeTable from "../components/RecipeTable";
 import LoadingScreen from "../components/LoadingScreen";
 import { Alert, Container, Pagination, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
@@ -13,7 +13,7 @@ export default function User() {
 
 	const [kind, setKind] = useState<'authored' | 'favourites'>('authored');
 	const [page, setPage] = useState(1);
-	const limit = 12;
+	const limit = 9;
 
 	const user = useQuery({
 		queryKey: ['user', {id: id}],
@@ -30,7 +30,7 @@ export default function User() {
 
 	const favourites = useQuery({
 		queryKey: ['favourites', {user: id}, page],
-		queryFn: () => getLikedRecipes(id, page - 1, limit),
+		queryFn: () => getFavouriteRecipes(id, page - 1, limit),
 		placeholderData: keepPreviousData,
 		retry: 1
 	});

@@ -69,7 +69,7 @@ const changeRole = async (id) => {
 const deleteUser = async (id) => {
     try {//first delete of the user's activity: favourite recipes, ratings, comments and recipes with all their data. Then delete the user.
         await pool.query(
-            'DELETE FROM likes WHERE user_id = $1',
+            'DELETE FROM favourites WHERE user_id = $1',
             [id]
         );
         await pool.query(
@@ -81,7 +81,7 @@ const deleteUser = async (id) => {
             [id]
         );
         await pool.query(
-            'DELETE FROM likes USING recipes WHERE likes.recipe_id = recipes.id AND recipes.user_id = $1',
+            'DELETE FROM favourites USING recipes WHERE favourites.recipe_id = recipes.id AND recipes.user_id = $1',
             [id]
         );
          await pool.query(
@@ -145,7 +145,7 @@ const getFilteredRecipesAmount = async (search, tags) => {
 const getRecipesByAuthor = async (author, page, limit) => {
     try {
         const result = await pool.query(
-            'SELECT id, title, tags FROM recipes WHERE accepted AND user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
+            'SELECT id, title, tags FROM recipes WHERE user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
             [author, limit, page*limit]
         );
         return result.rows;
@@ -158,7 +158,7 @@ const getRecipesByAuthor = async (author, page, limit) => {
 const getRecipesByAuthorAmount = async (author) => {
     try {
         const result = await pool.query(
-            'SELECT COUNT(id) FROM recipes WHERE accepted AND user_id = $1',
+            'SELECT COUNT(id) FROM recipes WHERE user_id = $1',
             [author]
         );
         return result.rows[0].count;
@@ -168,28 +168,28 @@ const getRecipesByAuthorAmount = async (author) => {
 }
 
 //get a list of recipes in favourites of a given user
-const getLikedRecipes = async (user, page, limit) => {
+const getFavouriteRecipes = async (user, page, limit) => {
     try {
         const result = await pool.query(
-            'SELECT recipes.id, recipes.title, recipes.tags FROM recipes JOIN likes ON recipes.id = likes.recipe_id WHERE accepted AND likes.user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
+            'SELECT recipes.id, recipes.title, recipes.tags FROM recipes JOIN favourites ON recipes.id = favourites.recipe_id WHERE accepted AND favourites.user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
             [user, limit, page*limit]
         );
         return result.rows;
     } catch (error) {
-        throw new Error("can't get liked recipes");
+        throw new Error("can't get favourite recipes");
     }
 }
 
 //get a number of recipes in favourites of a given user
-const getLikedRecipesAmount = async (user) => {
+const getFavouriteRecipesAmount = async (user) => {
     try {
         const result = await pool.query(
-            'SELECT COUNT(recipes.id) FROM recipes JOIN likes ON recipes.id = likes.recipe_id WHERE accepted AND likes.user_id = $1',
+            'SELECT COUNT(recipes.id) FROM recipes JOIN favourites ON recipes.id = favourites.recipe_id WHERE accepted AND favourites.user_id = $1',
             [user]
         );
         return result.rows[0].count;
     } catch (error) {
-        throw new Error("can't get liked recipes amount");
+        throw new Error("can't get favourite recipes amount");
     }
 }
 
@@ -263,7 +263,7 @@ const updateRecipe = async (id, title, ingredients, content, portions, tags, acc
 const deleteRecipe = async (id) => {
     try {
         await pool.query(
-            'DELETE FROM likes WHERE recipe_id = $1',
+            'DELETE FROM favourites WHERE recipe_id = $1',
             [id]
         );
         await pool.query(
@@ -287,42 +287,42 @@ const deleteRecipe = async (id) => {
 
 // ---------------- favourite recipe queries ----------------
 
-//check whether a user likes a recipe
-const getIsLiked = async (user_id, recipe_id) => {
+//check whether a user favourites a recipe
+const getIsFavourite = async (user_id, recipe_id) => {
     try {
         const result = await pool.query(
-            'SELECT COUNT(id) FROM likes WHERE user_id = $1 AND recipe_id = $2',
+            'SELECT COUNT(id) FROM favourites WHERE user_id = $1 AND recipe_id = $2',
             [user_id, recipe_id]
         );
         return result.rows[0].count;
     } catch (error) {
-        throw new Error("can't get likes by recipe");
+        throw new Error("can't get favourites by recipe");
     }
 }
 
 //add a recipe to user's favourites
-const addLike = async (user_id, recipe_id) => {
+const addFavourite = async (user_id, recipe_id) => {
     try {
         await pool.query(
-        'INSERT INTO likes (user_id, recipe_id) VALUES ($1, $2)',
+        'INSERT INTO favourites (user_id, recipe_id) VALUES ($1, $2)',
         [user_id, recipe_id]
         );
         return true;
     } catch (error) {
-        throw new Error("can't add like");
+        throw new Error("can't add favourite");
   }
 }
 
 //delete a recipe from user's favourites
-const deleteLike = async (user_id, recipe_id) => {
+const deleteFavourite = async (user_id, recipe_id) => {
     try {
         await pool.query(
-            'DELETE FROM likes WHERE user_id = $1 AND recipe_id = $2',
+            'DELETE FROM favourites WHERE user_id = $1 AND recipe_id = $2',
             [user_id, recipe_id]
         );
         return true;
     } catch (error) {
-        throw new Error("can't delete like");
+        throw new Error("can't delete favourite");
     }
 }
 
@@ -465,17 +465,17 @@ export {
     getFilteredRecipesAmount,
     getRecipesByAuthor,
     getRecipesByAuthorAmount,
-    getLikedRecipes,
-    getLikedRecipesAmount,
+    getFavouriteRecipes,
+    getFavouriteRecipesAmount,
     getNotAcceptedRecipes,
     getNotAcceptedRecipesAmount,
     getRecipeById,
     createRecipe,
     updateRecipe,
     deleteRecipe,
-    getIsLiked,
-    addLike,
-    deleteLike,
+    getIsFavourite,
+    addFavourite,
+    deleteFavourite,
     getRatingAverage,
     getRating,
     addRating,

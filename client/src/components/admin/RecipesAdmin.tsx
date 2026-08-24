@@ -12,7 +12,7 @@ export default function RecipesAdmin({
 	user: UserData
 }) {
 	const [page, setPage] = useState(1);
-	const limit = 12;
+	const limit = 9;
 	
 	const {data, isPending, isError} = useQuery({
 		queryKey: ['recipes to accept', page],

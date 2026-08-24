@@ -22,21 +22,21 @@ SET row_security = off;
 ALTER TABLE ONLY public.recipes DROP CONSTRAINT recipes_user_id_fkey;
 ALTER TABLE ONLY public.ratings DROP CONSTRAINT ratings_user_id_fkey;
 ALTER TABLE ONLY public.ratings DROP CONSTRAINT ratings_recipe_id_fkey;
-ALTER TABLE ONLY public.likes DROP CONSTRAINT likes_user_id_fkey;
-ALTER TABLE ONLY public.likes DROP CONSTRAINT likes_recipe_id_fkey;
+ALTER TABLE ONLY public.favourites DROP CONSTRAINT favourites_user_id_fkey;
+ALTER TABLE ONLY public.favourites DROP CONSTRAINT favourites_recipe_id_fkey;
 ALTER TABLE ONLY public.comments DROP CONSTRAINT comments_user_id_fkey;
 ALTER TABLE ONLY public.comments DROP CONSTRAINT comments_recipe_id_fkey;
 ALTER TABLE ONLY public.users DROP CONSTRAINT users_pkey;
 ALTER TABLE ONLY public.tags DROP CONSTRAINT tags_pkey;
 ALTER TABLE ONLY public.recipes DROP CONSTRAINT recipes_pkey;
 ALTER TABLE ONLY public.ratings DROP CONSTRAINT ratings_pkey;
-ALTER TABLE ONLY public.likes DROP CONSTRAINT likes_pkey;
+ALTER TABLE ONLY public.favourites DROP CONSTRAINT favourites_pkey;
 ALTER TABLE ONLY public.comments DROP CONSTRAINT comments_pkey;
 ALTER TABLE public.users ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.tags ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.recipes ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.ratings ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE public.likes ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.favourites ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.comments ALTER COLUMN id DROP DEFAULT;
 DROP SEQUENCE public.users_id_seq;
 DROP TABLE public.users;
@@ -46,8 +46,8 @@ DROP SEQUENCE public.recipes_id_seq;
 DROP TABLE public.recipes;
 DROP SEQUENCE public.ratings_id_seq;
 DROP TABLE public.ratings;
-DROP SEQUENCE public.likes_id_seq;
-DROP TABLE public.likes;
+DROP SEQUENCE public.favourites_id_seq;
+DROP TABLE public.favourites;
 DROP SEQUENCE public.comments_id_seq;
 DROP TABLE public.comments;
 SET default_tablespace = '';
@@ -87,10 +87,10 @@ ALTER SEQUENCE public.comments_id_seq OWNED BY public.comments.id;
 
 
 --
--- Name: likes; Type: TABLE; Schema: public; Owner: -
+-- Name: favourites; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.likes (
+CREATE TABLE public.favourites (
     id integer NOT NULL,
     user_id integer NOT NULL,
     recipe_id integer NOT NULL
@@ -98,10 +98,10 @@ CREATE TABLE public.likes (
 
 
 --
--- Name: likes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: favourites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.likes_id_seq
+CREATE SEQUENCE public.favourites_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -111,10 +111,10 @@ CREATE SEQUENCE public.likes_id_seq
 
 
 --
--- Name: likes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: favourites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.likes_id_seq OWNED BY public.likes.id;
+ALTER SEQUENCE public.favourites_id_seq OWNED BY public.favourites.id;
 
 
 --
@@ -255,10 +255,10 @@ ALTER TABLE ONLY public.comments ALTER COLUMN id SET DEFAULT nextval('public.com
 
 
 --
--- Name: likes id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: favourites id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.likes ALTER COLUMN id SET DEFAULT nextval('public.likes_id_seq'::regclass);
+ALTER TABLE ONLY public.favourites ALTER COLUMN id SET DEFAULT nextval('public.favourites_id_seq'::regclass);
 
 
 --
@@ -298,11 +298,11 @@ ALTER TABLE ONLY public.comments
 
 
 --
--- Name: likes likes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: favourites favourites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.likes
-    ADD CONSTRAINT likes_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.favourites
+    ADD CONSTRAINT favourites_pkey PRIMARY KEY (id);
 
 
 --
@@ -354,19 +354,19 @@ ALTER TABLE ONLY public.comments
 
 
 --
--- Name: likes likes_recipe_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: favourites favourites_recipe_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.likes
-    ADD CONSTRAINT likes_recipe_id_fkey FOREIGN KEY (recipe_id) REFERENCES public.recipes(id);
+ALTER TABLE ONLY public.favourites
+    ADD CONSTRAINT favourites_recipe_id_fkey FOREIGN KEY (recipe_id) REFERENCES public.recipes(id);
 
 
 --
--- Name: likes likes_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: favourites favourites_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.likes
-    ADD CONSTRAINT likes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+ALTER TABLE ONLY public.favourites
+    ADD CONSTRAINT favourites_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --

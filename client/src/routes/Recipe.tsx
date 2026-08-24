@@ -4,7 +4,7 @@ import { getRecipeById, deleteRecipe, updateRecipe } from "../utils/recipeQuerie
 import { getRatingAverage } from "../utils/otherQueries";
 import { useAuth } from "../contexts/authContext";
 import { useMixRecipes } from "../contexts/mixRecipesContext";
-import LikeAndRatingButtons from "../components/LikeAndRatingButtons";
+import FavouriteAndRatingButtons from "../components/FavouriteAndRatingButtons";
 import Tags from "../components/Tags";
 import Ingredients from "../components/Ingredients";
 import LoadingScreen from "../components/LoadingScreen";
@@ -66,7 +66,7 @@ export default function Recipe() {
 				{data.accepted && user && !recipesToMix.includes(id) &&
 					<Button onClick={() => addRecipeToMix(id)}> Add to Mix recipes</Button>
 				}
-				{data.accepted && user && user.id != data.user_id && <LikeAndRatingButtons recipe_id={id} user={user} ratingAvgRefetch={ratingavg.refetch}/>}
+				{data.accepted && user && user.id != data.user_id && <FavouriteAndRatingButtons recipe_id={id} user={user} ratingAvgRefetch={ratingavg.refetch}/>}
 				<Typography variant="h4">{data.title}</Typography>
 				{!data.accepted && <Typography variant='button' color="secondary">not accepted</Typography>}
 				<Stack

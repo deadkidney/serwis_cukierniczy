@@ -13,7 +13,7 @@ export default function Home() {
 	const [searchVal, setSearchVal] = useState('');
 	const [tags, setTags] = useState<string[]>([]);
 	const [page, setPage] = useState(1);
-	const limit = 12;
+	const limit = 9;
     
 	const {data, isPending, isError, refetch} = useQuery({
         queryKey: ['recipes', page],

@@ -18,9 +18,9 @@ describe('add and remove from favourites queries', () => {
         let recipe = exRecipes[2];
         const id = await db.createRecipe(recipe.title, recipe.user_id, recipe.ingredients, recipe.content, recipe.portions, recipe.tags);
         
-        await expect(db.addLike(1, id)).resolves.toBeTruthy();
+        await expect(db.addFavourite(1, id)).resolves.toBeTruthy();
 
-        await expect(db.deleteLike(1, id)).resolves.toBeTruthy();
+        await expect(db.deleteFavourite(1, id)).resolves.toBeTruthy();
 
         await db.deleteRecipe(id);
     });
@@ -29,11 +29,11 @@ describe('add and remove from favourites queries', () => {
         let recipe = exRecipes[1];
         const id = await db.createRecipe(recipe.title, recipe.user_id, recipe.ingredients, recipe.content, recipe.portions, recipe.tags);
         
-        await expect(db.addLike(notid, id)).rejects.toThrow("can't add like");
+        await expect(db.addFavourite(notid, id)).rejects.toThrow("can't add favourite");
 
         await db.deleteRecipe(id);
 
-        await expect(db.addLike(2, id)).rejects.toThrow("can't add like");
+        await expect(db.addFavourite(2, id)).rejects.toThrow("can't add favourite");
     });
 });
 
@@ -42,19 +42,19 @@ describe('check favourites query', () => {
         let recipe = exRecipes[2];
         const id = await db.createRecipe(recipe.title, recipe.user_id, recipe.ingredients, recipe.content, recipe.portions, recipe.tags);
         
-        await db.addLike(1, id);
+        await db.addFavourite(1, id);
 
-        await expect(db.getIsLiked(1, id)).resolves.toBe("1");
-        await expect(db.getIsLiked(2, id)).resolves.toBe("0");
-        await expect(db.getIsLiked(notid, id)).resolves.toBe("0");
+        await expect(db.getIsFavourite(1, id)).resolves.toBe("1");
+        await expect(db.getIsFavourite(2, id)).resolves.toBe("0");
+        await expect(db.getIsFavourite(notid, id)).resolves.toBe("0");
 
-        await db.deleteLike(1, id);
+        await db.deleteFavourite(1, id);
 
-        await expect(db.getIsLiked(1, id)).resolves.toBe("0");
+        await expect(db.getIsFavourite(1, id)).resolves.toBe("0");
         
         await db.deleteRecipe(id);
 
-        await expect(db.getIsLiked(1, id)).resolves.toBe("0");
+        await expect(db.getIsFavourite(1, id)).resolves.toBe("0");
 
     });
 });

@@ -34,7 +34,7 @@ export interface UserData {
     token: string;
 }
 
-export interface LikeData {
+export interface FavouriteData {
     user_id: string;
     recipe_id: string;
 }

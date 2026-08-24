@@ -17,7 +17,7 @@ const app = express();
 const port = 8080;
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(auth.processToken);//process the JWT
+app.use(auth.processToken); //process the JWT
 
 //function for testing the behaviour in the case of a slow response
 function sleep(ms) {
@@ -50,7 +50,7 @@ app.get('/api/users', async (req, res) => {
 		throw new Error('invalid credentials');
 	const {page, limit} = req.query;
 	const rows = await db.getUsers(page, limit);
-	const count = await db.getUsersAmount();//amount of all users, used for pagination
+	const count = await db.getUsersAmount(); //amount of all users, used for pagination
 	res.status(200).json({rows, count});
 });
 
@@ -85,11 +85,11 @@ app.delete('/api/userinfo', async (req, res) => {
 //send the list of recipes filtered by name and tags
 app.get("/api/recipes/filtered", async (req, res) => {
 	const {search, tags, page, limit} = req.query;
-	let acceptedtags = await db.getTags();//get the list of accepted tags
+	let acceptedtags = await db.getTags(); //get the list of accepted tags
 	acceptedtags = acceptedtags.map((tag) => {return tag.name;});
 	const taglist = tags.split(',').filter((tag) => acceptedtags.includes(tag))//filter tags to include only accepted, safe tags
 	const rows = await db.getFilteredRecipes(search, taglist, page, limit);
-	const count = await db.getFilteredRecipesAmount(search, taglist);//amount of all matching recipes, used for pagination
+	const count = await db.getFilteredRecipesAmount(search, taglist); //amount of all matching recipes, used for pagination
 	res.status(200).json({rows, count});
 });
 
@@ -98,16 +98,16 @@ app.get("/api/recipes/authored", async (req, res) => {
 	const author = parseInt(req.query.author);
 	const {page, limit} = req.query;
 	const rows = await db.getRecipesByAuthor(author, page, limit);
-	const count = await db.getRecipesByAuthorAmount(author);//amount of all matching recipes, used for pagination
+	const count = await db.getRecipesByAuthorAmount(author); //amount of all matching recipes, used for pagination
 	res.status(200).json({rows, count});
 });
 
 //send the list of recipes added to favourites by a given user
-app.get("/api/recipes/liked", async (req, res) => {
+app.get("/api/recipes/favourite", async (req, res) => {
 	const user = parseInt(req.query.user);
 	const {page, limit} = req.query;
-	const rows = await db.getLikedRecipes(user, page, limit);
-	const count = await db.getLikedRecipesAmount(user);//amount of all matching recipes, used for pagination
+	const rows = await db.getFavouriteRecipes(user, page, limit);
+	const count = await db.getFavouriteRecipesAmount(user); //amount of all matching recipes, used for pagination
 	res.status(200).json({rows, count});
 });
 
@@ -117,7 +117,7 @@ app.get("/api/recipes/notaccepted", async (req, res) => {
 		throw new Error("invalid credentials");
 	const {page, limit} = req.query;
 	const rows = await db.getNotAcceptedRecipes(page, limit);
-	const count = await db.getNotAcceptedRecipesAmount();//amount of all matching recipes, used for pagination
+	const count = await db.getNotAcceptedRecipesAmount(); //amount of all matching recipes, used for pagination
 	res.status(200).json({rows, count});
 });
 
@@ -160,37 +160,37 @@ app.delete('/api/recipeinfo', async (req, res) => {
 	if((req.user.role === 'VIEVER' || req.user.id != recipe.user_id) && req.user.role !== 'ADMIN')
 		throw new Error('invalid credentials');
 	await db.deleteRecipe(id);
-	res.status(200).send(`deleted recipe ${id} and corresponding likes and comments`);
+	res.status(200).send(`deleted recipe ${id} and corresponding favourites and comments`);
 });
 
 
 // ---------------- favourite recipes ----------------
 
 //check if the user has a recipe in their favourites
-app.get('/api/likes', async (req, res) => {
+app.get('/api/favourites', async (req, res) => {
 	const { recipe, user } = req.query;
 	if(req.user.role === 'VIEVER' || req.user.id != user)
 		throw new Error('invalid credentials');
-	const rows = await db.getIsLiked(user,recipe);
+	const rows = await db.getIsFavourite(user,recipe);
 	res.status(200).json(rows);
 });
 
 //add a recipe to the user's favourites
-app.post('/api/likes', async (req, res) => {
+app.post('/api/favourites', async (req, res) => {
 	const { user_id, recipe_id } = req.body;
 	if(req.user.role === 'VIEVER' || req.user.id != user_id)
 		throw new Error('invalid credentials');
-	await db.addLike(user_id, recipe_id);
-	res.status(201).send('like added');
+	await db.addFavourite(user_id, recipe_id);
+	res.status(201).send('favourite added');
 });
 
 //delete a recipe from the user's favourites
-app.delete('/api/likes', async (req, res) => {
+app.delete('/api/favourites', async (req, res) => {
 	const { user_id, recipe_id } = req.body;
 	if(req.user.role === 'VIEVER' || req.user.id != user_id)
 		throw new Error('invalid credentials');
-	await db.deleteLike(user_id, recipe_id);
-	res.status(200).send('deleted like');
+	await db.deleteFavourite(user_id, recipe_id);
+	res.status(200).send('deleted favourite');
 });
 
 

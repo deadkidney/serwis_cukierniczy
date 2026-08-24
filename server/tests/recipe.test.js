@@ -43,7 +43,7 @@ describe('queries for adding and removal of recipes', () => {
         const id = await db.createRecipe(recipe.title, recipe.user_id, recipe.ingredients, recipe.content, recipe.portions, recipe.tags);
         await db.addComment(1, id, "lorem ipsum");
         await db.addComment(2, id, "dolor sit amet");
-        await db.addLike(2, id);
+        await db.addFavourite(2, id);
         await db.addRating(1, id, 4);
 
         await expect(db.deleteRecipe(id)).resolves.toBeTruthy();

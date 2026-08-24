@@ -27,8 +27,8 @@ export const getRecipesByAuthor = async (author_id: string, page: number, limit:
 }
 
 //get a list of user's favourite recipes. With pagination
-export const getLikedRecipes = async (user_id: string, page: number, limit: number) => {
-    const response = await fetch(`http://localhost:8080/api/recipes/liked?user=${user_id}&page=${page}&limit=${limit}`);
+export const getFavouriteRecipes = async (user_id: string, page: number, limit: number) => {
+    const response = await fetch(`http://localhost:8080/api/recipes/favourite?user=${user_id}&page=${page}&limit=${limit}`);
     if (!response.ok) {
             throw new Error('failed to find recipes');
     }
