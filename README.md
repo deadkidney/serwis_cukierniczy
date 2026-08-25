@@ -37,15 +37,15 @@ psql -U Uzytkownik -d BazaDanych -f "emptyDB.sql"
 Wtedy również należy uzupełnić plik `server/config.json`, tym razem używając dowolnego klucza kryptograficznego.
 	
 ### Uruchomienie
-Aby uruchomić serwery należy uruchomić w katalogu `server/` polecenie 
+Aby uruchomić serwery należy wykonać w katalogu `client/` polecenie 
+```
+npm run build
+```
+a następnie uruchomić polecenie
 ```
 npm run start
 ```
-oraz równolegle uruchomić polecenie
-```
-npm run dev
-```
-w katalogu `client/`.
+równolegle w katalogach `client/` oraz `server/`.
 
 Następnie należy otworzyć w przeglądarce link <http://localhost:5173>. 
 

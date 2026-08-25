@@ -113,7 +113,7 @@ const deleteUser = async (id) => {
 const getFilteredRecipes = async (search, tags, page, limit) => {
     const searchfilter = '%'+search+'%';
     const tagfilter = tags ? tags.map((tag) => `AND '${tag}' = ANY (tags)`).join(' ') : '';
-    const query = `SELECT id, title, tags FROM recipes WHERE accepted AND title LIKE $1 ${tagfilter} ORDER BY id DESC LIMIT $2 OFFSET $3`;
+    const query = `SELECT id, title, tags FROM recipes WHERE accepted AND title ILIKE $1 ${tagfilter} ORDER BY id DESC LIMIT $2 OFFSET $3`;
     try {
         const result = await pool.query(
             query,
@@ -129,7 +129,7 @@ const getFilteredRecipes = async (search, tags, page, limit) => {
 const getFilteredRecipesAmount = async (search, tags) => {
     const searchfilter = '%'+search+'%';
     const tagfilter = tags ? tags.map((tag) => `AND '${tag}' = ANY (tags)`).join(' ') : '';
-    const query = `SELECT COUNT(id) FROM recipes WHERE accepted AND title LIKE $1 ${tagfilter}`;
+    const query = `SELECT COUNT(id) FROM recipes WHERE accepted AND title ILIKE $1 ${tagfilter}`;
     try {
         const result = await pool.query(
             query,
