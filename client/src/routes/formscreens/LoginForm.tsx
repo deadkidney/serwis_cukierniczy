@@ -29,7 +29,7 @@ export default function LoginForm() {
 	return (
 		<Stack
 			direction={{sm: 'column', md: 'row'}}
-			spacing={{sm: 2, md: 4}}
+			spacing={{sm: 3, md: 4}}
 			divider={<Divider orientation="vertical" flexItem />}
 			sx={{
 				justifyContent: "space-evenly",
@@ -37,25 +37,25 @@ export default function LoginForm() {
 				padding: 4
 			}}
 		>
-		<Stack
-			spacing={{sm: 2, md: 4}} 
-			sx={{
-				justifyContent: "center",
-				alignItems: "center",
-			}}
-		>
-			<Typography variant="h4">
-				Login
-			</Typography>
-			<form onSubmit={handleSubmit}>
-				<Stack>
-					<TextField value={username} label="Username" onChange={(e) => setUsername(e.target.value)} required fullWidth/>
-					<TextField type="password" value={password} label="Password" onChange={(e) => setPassword(e.target.value)} required fullWidth/>
-					<Button type="submit">Log in</Button>
-				</Stack>
-            </form>
-		</Stack>
-		<RegistrationForm/>
+			<Stack
+				spacing={3} 
+				sx={{
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<Typography variant="h4">
+					Login
+				</Typography>
+				<form onSubmit={handleSubmit}>
+					<Stack spacing={2}>
+						<TextField value={username} label="Username" onChange={(e) => setUsername(e.target.value)} required fullWidth/>
+						<TextField type="password" value={password} label="Password" onChange={(e) => setPassword(e.target.value)} required fullWidth/>
+						<Button type="submit">Log in</Button>
+					</Stack>
+				</form>
+			</Stack>
+			<RegistrationForm/>
 		</Stack>
 	);
 };

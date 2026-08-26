@@ -1,27 +1,17 @@
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
 import { Box, AppBar, Typography, Toolbar, IconButton, Button } from '@mui/material';
-import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import HomeIcon from '@mui/icons-material/Home';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import UserMenu from "./UserMenu";
 
 export default function Header() {
 	const {user} = useAuth();
-	const navigate = useNavigate();
 
    return(
 		<Box sx={{ flexGrow: 1 }}>
 			<AppBar position="static">
 				<Toolbar>
-					<IconButton
-					onClick={() => navigate(-1)}
-					size="large"
-					aria-label="back"
-					color="inherit"
-					>
-						<ArrowBackRoundedIcon />
-					</IconButton>
 					<IconButton
 					component={RouterLink}
 					to='/'
@@ -48,7 +38,7 @@ export default function Header() {
 					</Typography>
 					
 					{user ?
-					<UserMenu /> :
+					<UserMenu user={user} /> :
 					<Button
 						component={RouterLink}
 						to='/login'

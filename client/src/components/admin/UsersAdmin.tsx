@@ -85,6 +85,7 @@ export default function UsersAdmin({
 			count={Math.ceil(data.count/limit)} 
 			page={page} 
 			onChange={(e: React.ChangeEvent<unknown>, value: number) => setPage(value)}
+			sx={{ paddingTop: 2 }}
 		/>
 	</TableContainer>
 	)

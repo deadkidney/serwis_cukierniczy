@@ -50,7 +50,7 @@ export default function AddRecipeForm() {
 				padding: 3
 			}}
 		>
-			<Typography variant="h3">
+			<Typography variant="h3" align="center">
 				Create new recipe
 			</Typography>
 			<Alert severity="info" color="secondary">

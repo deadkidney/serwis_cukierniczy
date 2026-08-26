@@ -63,7 +63,7 @@ export default function EditRecipeForm () {
 				padding: 3
 			}}
 		>	
-			<Typography variant="h3">
+			<Typography variant="h3" align="center">
 				Edit recipe
 			</Typography>
 			<Alert severity="info" color="secondary">

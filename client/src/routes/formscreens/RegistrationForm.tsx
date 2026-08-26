@@ -27,7 +27,7 @@ export default function RegistrationForm() {
 
 	return (
 		<Stack
-			spacing={{sm: 2, md: 4}} 
+			spacing={3} 
 			sx={{
 				justifyContent: "center",
 				alignItems: "center",
@@ -37,7 +37,7 @@ export default function RegistrationForm() {
 				Don't have an account yet?
 			</Typography>
 			<form onSubmit={handleSubmit}>
-				<Stack>
+				<Stack spacing={2}>
 					<TextField value={username} label="Username" onChange={(e) => setUsername(e.target.value)} required fullWidth/>
 					<TextField type="password" value={password} label="Password" onChange={(e) => setPassword(e.target.value)} required fullWidth/>
 					<Button type="submit">Register</Button>

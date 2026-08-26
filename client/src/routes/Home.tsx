@@ -81,6 +81,7 @@ export default function Home() {
 					count={Math.ceil(data.count/limit)} 
 					page={page} 
 					onChange={(e: React.ChangeEvent<unknown>, value: number) => setPage(value)}
+					sx={{ paddingTop: 2 }}
 				/>
         </Container>
     )

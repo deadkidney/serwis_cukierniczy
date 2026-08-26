@@ -1,17 +1,24 @@
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContext";
-import ColorSchemeToggle from "./ColorSchemeToggle";
-import { Box, Button, IconButton, Menu, MenuItem, Stack, useMediaQuery } from '@mui/material';
+import { Box, Button, Menu, MenuItem, Stack, Typography, useMediaQuery } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import type { UserData } from "../DataInterfaces";
+import { useMixRecipes } from "../contexts/mixRecipesContext";
 
-export default function UserMenu() {
-	const {user, deleteUserData} = useAuth();
+export default function UserMenu({
+	user
+} : {
+	user: UserData
+}) {
+	const { deleteUserData } = useAuth();
+	const { clearRecipesToMix } = useMixRecipes();
 	const navigate = useNavigate();
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
 	const logout = async () => {
 	  deleteUserData();
+	  clearRecipesToMix();
 	  navigate('/');
 	}
 
@@ -27,7 +34,7 @@ export default function UserMenu() {
 	if(isMobile)
 		return(
 			<Box>	
-				<IconButton
+				<Button
 					onClick={handleClick}
 					color="inherit"
 					aria-controls={open ? 'account-menu' : undefined}
@@ -35,7 +42,8 @@ export default function UserMenu() {
 					aria-expanded={open}
 				>
 					<AccountCircle />
-				</IconButton>
+					<Typography variant="body1" sx={{marginLeft: 1}}> {user.username}</Typography>
+				</Button>
 				<Menu
 				anchorEl={anchorEl}
 				id="account-menu"
@@ -92,6 +100,10 @@ export default function UserMenu() {
 		<Stack
 			direction='row'
 			spacing={0.5}
+			sx={{
+				justifyContent: "center",
+					alignItems: "center",
+			}}
 		>
 			{user.role == 'ADMIN' && 
 				<Button component={RouterLink} to='/admin' aria-label="admin" color="inherit">Admin</Button>
@@ -105,15 +117,16 @@ export default function UserMenu() {
 				Recipes mix
 			</Button>
 			<Button onClick={logout} aria-label="logout" color="secondary">Log out</Button>
-			<IconButton
+			
+			<Button
 				component={RouterLink}
 				to={`/user/${user.id}`}
 				aria-label="account of current user"
 				color="inherit"
 			>
 				<AccountCircle />
-			</IconButton>
-			<ColorSchemeToggle />
+				<Typography variant="body1" sx={{marginLeft: 1}}> {user.username}</Typography>
+			</Button>
 		</Stack>
 	)
 }
