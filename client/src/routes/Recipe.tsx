@@ -87,7 +87,7 @@ export default function Recipe() {
 					spacing={{sm: 2, md: 4}}
 					divider={<Divider orientation="vertical" flexItem />}
 					sx={{
-						justifyContent: "space-between",
+						justifyContent: "space-evenly",
 						alignItems: "flex-start",
 					}}
 				>

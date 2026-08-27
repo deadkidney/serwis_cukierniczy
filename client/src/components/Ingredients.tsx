@@ -12,6 +12,10 @@ export default function Ingredients({
 }) {
 	const [newPortions, setNewPortions] = useState(portions);
 
+	const round = (value: number) => {
+		return Math.round(value * 100) / 100;
+	}
+
 	return(
 		<Stack spacing={2}>
 			<Stack direction="row" spacing={1}>
@@ -26,7 +30,10 @@ export default function Ingredients({
 				</FormLabel>
 				{ingredients.map((ingredient) =>
 					<FormControlLabel key={ingredient.id} control={<Checkbox color="secondary"/>} 
-						label={`${ingredient.amount * parseFloat(newPortions) / parseFloat(portions)} ${ingredient.unit} ${ingredient.name}`} />
+						label={ Number.isNaN(parseFloat(newPortions)) ?
+							`${ingredient.amount} ${ingredient.unit} ${ingredient.name}` :
+							`${round(ingredient.amount * parseFloat(newPortions) / parseFloat(portions))} ${ingredient.unit} ${ingredient.name}`
+						} />
 				)}
 			</FormGroup>
 		</Stack>

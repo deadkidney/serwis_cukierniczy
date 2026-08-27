@@ -28,9 +28,26 @@ export const getUserById = async (id : string) => {
     return response.json();
 }
 
+//change a user's password
+export const changePassword = async ({id, oldPassword, newPassword, token} : {id: string, oldPassword: string, newPassword: string, token: string}) => {
+    const response = await fetch(`http://localhost:8080/api/userinfo/password?id=${id}`,
+        {   method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `${token}`
+            },
+            body: JSON.stringify({oldPassword, newPassword}),
+        }
+    );
+    if (!response.ok) {
+        throw new Error('failed to change password');
+    }
+    return true;
+}
+
 //change a user's role to admin. Admin only
 export const changeRole = async ({id, token} : {id: string, token: string}) => {
-    const response = await fetch(`http://localhost:8080/api/userinfo?id=${id}`,
+    const response = await fetch(`http://localhost:8080/api/userinfo/role?id=${id}`,
         {   method: 'PUT',
             headers: {
                 'Authorization': `${token}`
@@ -38,7 +55,7 @@ export const changeRole = async ({id, token} : {id: string, token: string}) => {
         }
     );
     if (!response.ok) {
-        throw new Error('failed to add recipe');
+        throw new Error('failed to change role');
     }
     return true;
 }
@@ -48,7 +65,6 @@ export const deleteUser = async ({id, token} : {id: string, token: string}) => {
     const response = await fetch(`http://localhost:8080/api/userinfo?id=${id}`,
         {   method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `${token}`
             },
         }

@@ -97,7 +97,6 @@ export const deleteRecipe = async ({id, token} : {id: string, token: string}) =>
     const response = await fetch(`http://localhost:8080/api/recipeinfo?id=${id}`,
         {   method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `${token}`
             },
         }

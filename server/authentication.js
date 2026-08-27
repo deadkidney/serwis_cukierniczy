@@ -70,6 +70,33 @@ const login = async (username, password) => {
     }
 }
 
+//change a user's password
+const changePassword = async (id, oldPassword, newPassword) => {
+    try{
+        //find a user by id
+        const user = await pool.query(
+            "SELECT * FROM users WHERE id = $1",
+            [id]
+        );
+        if(user.rowCount == 0)
+            throw new Error("invalid credentials");
+
+        //check the credentials and update the database
+        const isMatch = await bcrypt.compare(oldPassword, user.rows[0].passwordhash);
+        if(isMatch) {
+            const passwordhash = await bcrypt.hash(newPassword, config.BCRYPT_SALT);
+            await pool.query(
+                'UPDATE users SET passwordhash = $1 WHERE id = $2',
+                [passwordhash, id]
+            )
+        } else {
+            throw new Error("invalid credentials");
+        } 
+    } catch (error) {
+        throw new Error("can't change password");
+    }    
+}
+
 //express middleware for processing json web tokens
 const processToken = (req, res, next) => {
     const token = req.headers['authorization'];
@@ -88,5 +115,6 @@ const processToken = (req, res, next) => {
 export {
     register,
     login,
+    changePassword,
     processToken
 }

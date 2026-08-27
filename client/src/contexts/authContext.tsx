@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, type ReactNode } from 'react';
-import type { UserData } from './DataInterfaces';
+import type { UserData } from '../DataInterfaces';
 
 interface AuthContextType {
   user: UserData | null;

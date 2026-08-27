@@ -41,6 +41,16 @@ app.post('/api/login', async (req, res) => {
 	res.status(200).json(rows);
 });
 
+//change a user's password
+app.put('/api/userinfo/password', async (req, res) => {
+	const id = parseInt(req.query.id);
+	if(req.user.id !== id)
+		throw new Error('invalid credentials');
+	const { oldPassword, newPassword } = req.body;
+	await auth.changePassword(id, oldPassword, newPassword);
+	res.status(200).send(`updated user ${id}`);
+});
+
 
 // ---------------- user data ----------------
 
@@ -62,7 +72,7 @@ app.get('/api/userinfo', async (req, res) => {
 });
 
 //change the role of a user (ADMIN <-> USER)
-app.put('/api/userinfo', async (req, res) => {
+app.put('/api/userinfo/role', async (req, res) => {
 	const id = parseInt(req.query.id);
 	if(req.user.role !== 'ADMIN')
 		throw new Error('invalid credentials');
